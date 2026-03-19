@@ -6,10 +6,6 @@
   <title>OakTime — Mes tâches</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <!--
-    Feuille de style principale de l'application.
-    Séparée du template pour faciliter la maintenance et la mise en cache navigateur.
-  -->
   <link rel="stylesheet" th:href="@{/css/tache.css}"/>
 </head>
 <body>
@@ -18,12 +14,13 @@
 <header class="page-header">
   <div class="header-inner">
     <div class="header-brand">
-      <a th:href="@{/taches}" class="brand-link">
+      <a th:href="@{/}" class="brand-link">
         <span class="brand-icon">🌿</span>
         <span class="brand-name">OakTime</span>
       </a>
     </div>
     <nav class="header-nav">
+      <a th:href="@{/}"       class="nav-link">Tableau de bord</a>
       <a th:href="@{/taches}" class="nav-link nav-link--active">Tâches</a>
     </nav>
   </div>
@@ -106,7 +103,7 @@
 
         </a>
       </div>
-    </div><!-- fin tache-grid-wrap -->
+    </div>
 
     <!-- État vide -->
     <div class="empty-state" th:if="${#lists.isEmpty(taches)}">
@@ -121,10 +118,6 @@
   </div>
 </main>
 
-<!--
-  Script principal de l'application.
-  Séparé du template pour faciliter la maintenance et la mise en cache navigateur.
--->
 <script th:src="@{/js/tache.js}"></script>
 </body>
 </html>
