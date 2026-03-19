@@ -1,0 +1,200 @@
+2026-03-08 16:40:35.648255+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Colonne "STATUT_KANBAN" non trouvée
+Column "STATUT_KANBAN" not found; SQL statement:
+UPDATE tache SET statut_kanban = 'BACKLOG' WHERE statut_kanban IS NULL [42122-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.table.Table.getColumn(Table.java:778)
+	at org.h2.command.Parser.readTableColumn(Parser.java:966)
+	at org.h2.command.Parser.readUpdateSetClause(Parser.java:1053)
+	at org.h2.command.Parser.parseUpdate(Parser.java:1006)
+	at org.h2.command.Parser.parsePrepared(Parser.java:747)
+	at org.h2.command.Parser.parse(Parser.java:584)
+	at org.h2.command.Parser.parse(Parser.java:559)
+	at org.h2.command.Parser.prepareCommand(Parser.java:487)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:647)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:563)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1160)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:245)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.server.web.WebApp.getResult(WebApp.java:1344)
+	at org.h2.server.web.WebApp.query(WebApp.java:1142)
+	at org.h2.server.web.WebApp.query(WebApp.java:1118)
+	at org.h2.server.web.WebApp.process(WebApp.java:244)
+	at org.h2.server.web.WebApp.processRequest(WebApp.java:176)
+	at org.h2.server.web.JakartaWebServlet.doGet(JakartaWebServlet.java:129)
+	at org.h2.server.web.JakartaWebServlet.doPost(JakartaWebServlet.java:166)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-03-10 12:16:49.410491+01:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "-- Phase 1.1 : Cadrage (TERMINE - tous descendants terminés)\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (2, 'Cadrage & analyse',\000d\000a        'Phase de cadrage : recueil des besoins, audit de l'existant, benchmark concurrents.',\000d\000a        DATEADD('DAY', -88, NOW()), '2025-01-06', '2025-02-28', NULL, 'TERMINE', 1);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (3, 'Audit de l''existant',\000d\000a        'Analyse SEO, performances, accessibilité du site actuel. Rapport Lighthouse et axe d''amélioration.',\000d\000a        DATEADD('DAY', -87, NOW()), '2025-01-06', '2025-01-31', NULL, 'TERMINE', 2);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (4, 'Recueil des besoins métier',\000d\000a        'Ateliers avec les équipes marketing, communication et direction. Formalisation en user stories.',\000d\000a        DATEADD('DAY', -87, NOW()), '2025-01-13', '2025-02-14', NULL, 'TERMINE', 2);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (5, 'Benchmark concurrents',\000d\000a        'Analyse de 5 sites concurrents : ergonomie, contenus, technologies utilisées.',\000d\000a        DATEADD('DAY', -86, NOW()), '2025-01-20', '2025-02-28', NULL, 'TERMINE', 2);\000d\000a\000d\000a-- Prédécesseur : 4 dépend de 3 (audit avant recueil), 5 dépend de 4\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (4, 3);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (5, 4);\000d\000a\000d\000a-- Phase 1.2 : Design (EN_COURS — partiellement terminé)\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (6, 'Design UX/UI',\000d\000a        'Conception des maquettes, système de design et prototypes interactifs.',\000d\000a        DATEADD('DAY', -60, NOW()), '2025-03-03', '2025-05-30', NULL, 'EN_COURS', 1);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (7, 'Charte graphique',\000d\000a        'Définition de la palette de couleurs, typographies, iconographie et composants de base.',\000d\000a        DATEADD('DAY', -59, NOW()), '2025-03-03', '2025-03-28', NULL, 'TERMINE', 6);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (8, 'Maquettes pages principales',\000d\000a        'Home, page produit, contact, blog [*]— responsive mobile-first.',\000d\000a        DATEADD('DAY', -58, NOW()), '2025-03-31', '2025-04-30', '2025-05-15', 'EN_COURS', 6);\000d\000a-- Cas : date corrigée > date initiale → RETARD, fin dépassée\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (9, 'Prototype interactif Figma',\000d\000a        'Assemblage des maquettes en prototype cliquable pour tests utilisateurs.',\000d\000a        DATEADD('DAY', -57, NOW()), '2025-05-19', '2025-05-30', NULL, 'BACKLOG', 6);\000d\000a-- Cas : bloquée par 8 (prédécesseur EN_COURS)\000d\000a\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (8, 7);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (9, 8);\000d\000a\000d\000a-- Phase 1.3 : Développement (BACKLOG — pas encore démarré)\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (10, 'Développement',\000d\000a        'Intégration front-end, développement CMS, API et mise en production.',\000d\000a        DATEADD('DAY', -30, NOW()), '2025-06-02', '2025-09-26', NULL, 'BACKLOG', 1);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (11, 'Intégration HTML/CSS',\000d\000a        'Intégration pixel-perfect des maquettes validées. Accessibilité WCAG AA.',\000d\000a        DATEADD('DAY', -29, NOW()), '2025-06-02', '2025-07-11', NULL, 'BACKLOG', 10);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (12, 'Configuration CMS',\000d\000a        'Paramétrage WordPress/Strapi, création des types de contenus, rôles et permissions.',\000d\000a        DATEADD('DAY', -29, NOW()), '2025-07-14', '2025-08-08', NULL, 'BACKLOG', 10);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (13, 'Tests et recette',\000d\000a        'Tests fonctionnels, tests de charge, correction des anomalies et livraison.',\000d\000a        DATEADD('DAY', -28, NOW()), '2025-08-11', '2025-09-19', '2025-09-26', 'BACKLOG', 10);\000d\000a\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (12, 11);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (13, 12);\000d\000a\000d\000a\000d\000a-- =============================================================================\000d\000a-- PROJET 2 : ""Migration infrastructure cloud""\000d\000a-- Cas couverts :\000d\000a--   - Tâche racine sans sous-tâches (feuille racine)\000d\000a--   - Propagation auto TERMINE ascendante\000d\000a--   - Tâches dont la date de fin initiale est dans le futur (pas de dépassement)\000d\000a--   - Tâche avec uniquement date de fin initiale (pas de corrigée)\000d\000a--   - Plusieurs prédécesseurs sur une même tâche\000d\000a-- =============================================================================\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (20, 'Migration infrastructure cloud',\000d\000a        'Migration des serveurs on-premise vers AWS. Objectif : haute disponibilité, réduction des coûts de 30%.',\000d\000a        DATEADD('DAY', -45, NOW()), DATEADD('DAY', 5, CURRENT_DATE), DATEADD('DAY', 120, CURRENT_DATE), NULL, 'BACKLOG', NULL);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (21, 'Inventaire des services',\000d\000a        'Cartographie complète des applications, bases de données et dépendances à migrer.',\000d\000a        DATEADD('DAY', -44, NOW()), DATEADD('DAY', 5, CURRENT_DATE), DATEADD('DAY', 20, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (22, 'Architecture cible AWS',\000d\000a        'Conception de l''architecture VPC, subnets, sécurité, load balancer et auto-scaling.',\000d\000a        DATEADD('DAY', -44, NOW()), DATEADD('DAY', 21, CURRENT_DATE), DATEADD('DAY', 40, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (23, 'Migration base de données',\000d\000a        'Dump, transformation et import des bases PostgreSQL et MongoDB avec validation des données.',\000d\000a        DATEADD('DAY', -43, NOW()), DATEADD('DAY', 41, CURRENT_DATE), DATEADD('DAY', 70, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (24, 'Migration applicative',\000d\000a        'Déploiement des containers Docker sur ECS Fargate, configuration CI/CD.',\000d\000a        DATEADD('DAY', -43, NOW()), DATEADD('DAY', 71, CURRENT_DATE), DATEADD('DAY', 100, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (25, 'Tests de bascule et go-live',\000d\000a        'Simulation de bascule, tests de charge, validation client et mise en production.',\000d\000a        DATEADD('DAY', -42, NOW()), DATEADD('DAY', 101, CURRENT_DATE), DATEADD('DAY', 120, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000a-- Chaîne de prédécesseurs : 22→21, 23→22, 24→23, 25→21+23+24 (3 prédécesseurs)\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (22, 21);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (23, 22);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (24, 23);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (25, 21);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (25, 23);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (25, 24);\000d\000a\000d\000a\000d\000a-- =============================================================================\000d\000a-- PROJET 3 : ""Formation équipe dev""\000d\000a-- Cas couverts :\000d\000a--   - Toutes sous-tâches TERMINE → parent auto-terminé\000d\000a--   - Tâche sans description (champ optionnel)\000d\000a--   - Tâche sans date de début (pas encore planifiée)\000d\000a--   - Tâche feuille racine (sans enfants ni parent)\000d\000a--   - Date fin initiale dans le passé mais statut TERMINE (pas d'alerte)\000d\000a-- =============================================================================\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (30, 'Formation équipe dev',\000d\000a        'Plan de formation annuel pour l''équipe technique : Cloud, Sécurité et pratiques DevOps.',\000d\000a        DATEADD('DAY', -120, NOW()), '2025-01-13', '2025-06-27', NULL, 'TERMINE', NULL)"
+Syntax error in SQL statement "-- Phase 1.1 : Cadrage (TERMINE - tous descendants terminés)\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (2, 'Cadrage & analyse',\000d\000a        'Phase de cadrage : recueil des besoins, audit de l'existant, benchmark concurrents.',\000d\000a        DATEADD('DAY', -88, NOW()), '2025-01-06', '2025-02-28', NULL, 'TERMINE', 1);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (3, 'Audit de l''existant',\000d\000a        'Analyse SEO, performances, accessibilité du site actuel. Rapport Lighthouse et axe d''amélioration.',\000d\000a        DATEADD('DAY', -87, NOW()), '2025-01-06', '2025-01-31', NULL, 'TERMINE', 2);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (4, 'Recueil des besoins métier',\000d\000a        'Ateliers avec les équipes marketing, communication et direction. Formalisation en user stories.',\000d\000a        DATEADD('DAY', -87, NOW()), '2025-01-13', '2025-02-14', NULL, 'TERMINE', 2);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (5, 'Benchmark concurrents',\000d\000a        'Analyse de 5 sites concurrents : ergonomie, contenus, technologies utilisées.',\000d\000a        DATEADD('DAY', -86, NOW()), '2025-01-20', '2025-02-28', NULL, 'TERMINE', 2);\000d\000a\000d\000a-- Prédécesseur : 4 dépend de 3 (audit avant recueil), 5 dépend de 4\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (4, 3);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (5, 4);\000d\000a\000d\000a-- Phase 1.2 : Design (EN_COURS — partiellement terminé)\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (6, 'Design UX/UI',\000d\000a        'Conception des maquettes, système de design et prototypes interactifs.',\000d\000a        DATEADD('DAY', -60, NOW()), '2025-03-03', '2025-05-30', NULL, 'EN_COURS', 1);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (7, 'Charte graphique',\000d\000a        'Définition de la palette de couleurs, typographies, iconographie et composants de base.',\000d\000a        DATEADD('DAY', -59, NOW()), '2025-03-03', '2025-03-28', NULL, 'TERMINE', 6);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (8, 'Maquettes pages principales',\000d\000a        'Home, page produit, contact, blog [*]— responsive mobile-first.',\000d\000a        DATEADD('DAY', -58, NOW()), '2025-03-31', '2025-04-30', '2025-05-15', 'EN_COURS', 6);\000d\000a-- Cas : date corrigée > date initiale → RETARD, fin dépassée\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (9, 'Prototype interactif Figma',\000d\000a        'Assemblage des maquettes en prototype cliquable pour tests utilisateurs.',\000d\000a        DATEADD('DAY', -57, NOW()), '2025-05-19', '2025-05-30', NULL, 'BACKLOG', 6);\000d\000a-- Cas : bloquée par 8 (prédécesseur EN_COURS)\000d\000a\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (8, 7);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (9, 8);\000d\000a\000d\000a-- Phase 1.3 : Développement (BACKLOG — pas encore démarré)\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (10, 'Développement',\000d\000a        'Intégration front-end, développement CMS, API et mise en production.',\000d\000a        DATEADD('DAY', -30, NOW()), '2025-06-02', '2025-09-26', NULL, 'BACKLOG', 1);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (11, 'Intégration HTML/CSS',\000d\000a        'Intégration pixel-perfect des maquettes validées. Accessibilité WCAG AA.',\000d\000a        DATEADD('DAY', -29, NOW()), '2025-06-02', '2025-07-11', NULL, 'BACKLOG', 10);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (12, 'Configuration CMS',\000d\000a        'Paramétrage WordPress/Strapi, création des types de contenus, rôles et permissions.',\000d\000a        DATEADD('DAY', -29, NOW()), '2025-07-14', '2025-08-08', NULL, 'BACKLOG', 10);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (13, 'Tests et recette',\000d\000a        'Tests fonctionnels, tests de charge, correction des anomalies et livraison.',\000d\000a        DATEADD('DAY', -28, NOW()), '2025-08-11', '2025-09-19', '2025-09-26', 'BACKLOG', 10);\000d\000a\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (12, 11);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (13, 12);\000d\000a\000d\000a\000d\000a-- =============================================================================\000d\000a-- PROJET 2 : ""Migration infrastructure cloud""\000d\000a-- Cas couverts :\000d\000a--   - Tâche racine sans sous-tâches (feuille racine)\000d\000a--   - Propagation auto TERMINE ascendante\000d\000a--   - Tâches dont la date de fin initiale est dans le futur (pas de dépassement)\000d\000a--   - Tâche avec uniquement date de fin initiale (pas de corrigée)\000d\000a--   - Plusieurs prédécesseurs sur une même tâche\000d\000a-- =============================================================================\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (20, 'Migration infrastructure cloud',\000d\000a        'Migration des serveurs on-premise vers AWS. Objectif : haute disponibilité, réduction des coûts de 30%.',\000d\000a        DATEADD('DAY', -45, NOW()), DATEADD('DAY', 5, CURRENT_DATE), DATEADD('DAY', 120, CURRENT_DATE), NULL, 'BACKLOG', NULL);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (21, 'Inventaire des services',\000d\000a        'Cartographie complète des applications, bases de données et dépendances à migrer.',\000d\000a        DATEADD('DAY', -44, NOW()), DATEADD('DAY', 5, CURRENT_DATE), DATEADD('DAY', 20, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (22, 'Architecture cible AWS',\000d\000a        'Conception de l''architecture VPC, subnets, sécurité, load balancer et auto-scaling.',\000d\000a        DATEADD('DAY', -44, NOW()), DATEADD('DAY', 21, CURRENT_DATE), DATEADD('DAY', 40, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (23, 'Migration base de données',\000d\000a        'Dump, transformation et import des bases PostgreSQL et MongoDB avec validation des données.',\000d\000a        DATEADD('DAY', -43, NOW()), DATEADD('DAY', 41, CURRENT_DATE), DATEADD('DAY', 70, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (24, 'Migration applicative',\000d\000a        'Déploiement des containers Docker sur ECS Fargate, configuration CI/CD.',\000d\000a        DATEADD('DAY', -43, NOW()), DATEADD('DAY', 71, CURRENT_DATE), DATEADD('DAY', 100, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (25, 'Tests de bascule et go-live',\000d\000a        'Simulation de bascule, tests de charge, validation client et mise en production.',\000d\000a        DATEADD('DAY', -42, NOW()), DATEADD('DAY', 101, CURRENT_DATE), DATEADD('DAY', 120, CURRENT_DATE), NULL, 'BACKLOG', 20);\000d\000a\000d\000a-- Chaîne de prédécesseurs : 22→21, 23→22, 24→23, 25→21+23+24 (3 prédécesseurs)\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (22, 21);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (23, 22);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (24, 23);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (25, 21);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (25, 23);\000d\000aINSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (25, 24);\000d\000a\000d\000a\000d\000a-- =============================================================================\000d\000a-- PROJET 3 : ""Formation équipe dev""\000d\000a-- Cas couverts :\000d\000a--   - Toutes sous-tâches TERMINE → parent auto-terminé\000d\000a--   - Tâche sans description (champ optionnel)\000d\000a--   - Tâche sans date de début (pas encore planifiée)\000d\000a--   - Tâche feuille racine (sans enfants ni parent)\000d\000a--   - Date fin initiale dans le passé mais statut TERMINE (pas d'alerte)\000d\000a-- =============================================================================\000d\000a\000d\000aINSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)\000d\000aVALUES (30, 'Formation équipe dev',\000d\000a        'Plan de formation annuel pour l''équipe technique : Cloud, Sécurité et pratiques DevOps.',\000d\000a        DATEADD('DAY', -120, NOW()), '2025-01-13', '2025-06-27', NULL, 'TERMINE', NULL)"; SQL statement:
+-- Phase 1.1 : Cadrage (TERMINE - tous descendants terminés)
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (2, 'Cadrage & analyse',
+        'Phase de cadrage : recueil des besoins, audit de l'existant, benchmark concurrents.',
+        DATEADD('DAY', -88, NOW()), '2025-01-06', '2025-02-28', NULL, 'TERMINE', 1);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (3, 'Audit de l''existant',
+        'Analyse SEO, performances, accessibilité du site actuel. Rapport Lighthouse et axe d''amélioration.',
+        DATEADD('DAY', -87, NOW()), '2025-01-06', '2025-01-31', NULL, 'TERMINE', 2);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (4, 'Recueil des besoins métier',
+        'Ateliers avec les équipes marketing, communication et direction. Formalisation en user stories.',
+        DATEADD('DAY', -87, NOW()), '2025-01-13', '2025-02-14', NULL, 'TERMINE', 2);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (5, 'Benchmark concurrents',
+        'Analyse de 5 sites concurrents : ergonomie, contenus, technologies utilisées.',
+        DATEADD('DAY', -86, NOW()), '2025-01-20', '2025-02-28', NULL, 'TERMINE', 2);
+
+-- Prédécesseur : 4 dépend de 3 (audit avant recueil), 5 dépend de 4
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (4, 3);
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (5, 4);
+
+-- Phase 1.2 : Design (EN_COURS — partiellement terminé)
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (6, 'Design UX/UI',
+        'Conception des maquettes, système de design et prototypes interactifs.',
+        DATEADD('DAY', -60, NOW()), '2025-03-03', '2025-05-30', NULL, 'EN_COURS', 1);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (7, 'Charte graphique',
+        'Définition de la palette de couleurs, typographies, iconographie et composants de base.',
+        DATEADD('DAY', -59, NOW()), '2025-03-03', '2025-03-28', NULL, 'TERMINE', 6);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (8, 'Maquettes pages principales',
+        'Home, page produit, contact, blog — responsive mobile-first.',
+        DATEADD('DAY', -58, NOW()), '2025-03-31', '2025-04-30', '2025-05-15', 'EN_COURS', 6);
+-- Cas : date corrigée > date initiale → RETARD, fin dépassée
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (9, 'Prototype interactif Figma',
+        'Assemblage des maquettes en prototype cliquable pour tests utilisateurs.',
+        DATEADD('DAY', -57, NOW()), '2025-05-19', '2025-05-30', NULL, 'BACKLOG', 6);
+-- Cas : bloquée par 8 (prédécesseur EN_COURS)
+
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (8, 7);
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (9, 8);
+
+-- Phase 1.3 : Développement (BACKLOG — pas encore démarré)
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (10, 'Développement',
+        'Intégration front-end, développement CMS, API et mise en production.',
+        DATEADD('DAY', -30, NOW()), '2025-06-02', '2025-09-26', NULL, 'BACKLOG', 1);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (11, 'Intégration HTML/CSS',
+        'Intégration pixel-perfect des maquettes validées. Accessibilité WCAG AA.',
+        DATEADD('DAY', -29, NOW()), '2025-06-02', '2025-07-11', NULL, 'BACKLOG', 10);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (12, 'Configuration CMS',
+        'Paramétrage WordPress/Strapi, création des types de contenus, rôles et permissions.',
+        DATEADD('DAY', -29, NOW()), '2025-07-14', '2025-08-08', NULL, 'BACKLOG', 10);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (13, 'Tests et recette',
+        'Tests fonctionnels, tests de charge, correction des anomalies et livraison.',
+        DATEADD('DAY', -28, NOW()), '2025-08-11', '2025-09-19', '2025-09-26', 'BACKLOG', 10);
+
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (12, 11);
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (13, 12);
+
+
+-- =============================================================================
+-- PROJET 2 : "Migration infrastructure cloud"
+-- Cas couverts :
+--   - Tâche racine sans sous-tâches (feuille racine)
+--   - Propagation auto TERMINE ascendante
+--   - Tâches dont la date de fin initiale est dans le futur (pas de dépassement)
+--   - Tâche avec uniquement date de fin initiale (pas de corrigée)
+--   - Plusieurs prédécesseurs sur une même tâche
+-- =============================================================================
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (20, 'Migration infrastructure cloud',
+        'Migration des serveurs on-premise vers AWS. Objectif : haute disponibilité, réduction des coûts de 30%.',
+        DATEADD('DAY', -45, NOW()), DATEADD('DAY', 5, CURRENT_DATE), DATEADD('DAY', 120, CURRENT_DATE), NULL, 'BACKLOG', NULL);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (21, 'Inventaire des services',
+        'Cartographie complète des applications, bases de données et dépendances à migrer.',
+        DATEADD('DAY', -44, NOW()), DATEADD('DAY', 5, CURRENT_DATE), DATEADD('DAY', 20, CURRENT_DATE), NULL, 'BACKLOG', 20);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (22, 'Architecture cible AWS',
+        'Conception de l''architecture VPC, subnets, sécurité, load balancer et auto-scaling.',
+        DATEADD('DAY', -44, NOW()), DATEADD('DAY', 21, CURRENT_DATE), DATEADD('DAY', 40, CURRENT_DATE), NULL, 'BACKLOG', 20);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (23, 'Migration base de données',
+        'Dump, transformation et import des bases PostgreSQL et MongoDB avec validation des données.',
+        DATEADD('DAY', -43, NOW()), DATEADD('DAY', 41, CURRENT_DATE), DATEADD('DAY', 70, CURRENT_DATE), NULL, 'BACKLOG', 20);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (24, 'Migration applicative',
+        'Déploiement des containers Docker sur ECS Fargate, configuration CI/CD.',
+        DATEADD('DAY', -43, NOW()), DATEADD('DAY', 71, CURRENT_DATE), DATEADD('DAY', 100, CURRENT_DATE), NULL, 'BACKLOG', 20);
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (25, 'Tests de bascule et go-live',
+        'Simulation de bascule, tests de charge, validation client et mise en production.',
+        DATEADD('DAY', -42, NOW()), DATEADD('DAY', 101, CURRENT_DATE), DATEADD('DAY', 120, CURRENT_DATE), NULL, 'BACKLOG', 20);
+
+-- Chaîne de prédécesseurs : 22→21, 23→22, 24→23, 25→21+23+24 (3 prédécesseurs)
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (22, 21);
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (23, 22);
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (24, 23);
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (25, 21);
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (25, 23);
+INSERT INTO tache_predecesseur (tache_id, predecesseur_id) VALUES (25, 24);
+
+
+-- =============================================================================
+-- PROJET 3 : "Formation équipe dev"
+-- Cas couverts :
+--   - Toutes sous-tâches TERMINE → parent auto-terminé
+--   - Tâche sans description (champ optionnel)
+--   - Tâche sans date de début (pas encore planifiée)
+--   - Tâche feuille racine (sans enfants ni parent)
+--   - Date fin initiale dans le passé mais statut TERMINE (pas d'alerte)
+-- =============================================================================
+
+INSERT INTO tache (id, nom, description, date_creation, date_debut, date_fin_initiale, date_fin_corrigee, statut_kanban, parent_id)
+VALUES (30, 'Formation équipe dev',
+        'Plan de formation annuel pour l''équipe technique : Cloud, Sécurité et pratiques DevOps.',
+        DATEADD('DAY', -120, NOW()), '2025-01-13', '2025-06-27', NULL, 'TERMINE', NULL) [42000-240]

@@ -1,0 +1,3049 @@
+/*
+ * tache.css — Feuille de style principale d'OakTime
+ *
+ * Organisation :
+ *  1. Variables CSS
+ *  2. Reset & base
+ *  3. Layout (header, main, wrapper)
+ *  4. Typographie
+ *  5. Composants (card, badge, alert, breadcrumb)
+ *  6. Formulaires
+ *  7. Boutons
+ *  8. Liste des tâches (grid, card)
+ *  9. Vue arbre (tree)
+ * 10. États vides
+ * 11. Responsive
+ */
+
+/* =============================================================================
+   1. VARIABLES CSS
+   ============================================================================= */
+:root {
+  /* Palette pastel */
+  --bg:             #f4f1ee;
+  --surface:        #fdfcfb;
+  --surface-alt:    #f8f5f2;
+  --border:         #e4ddd7;
+  --border-focus:   #b8a99a;
+
+  --sage:           #c8d8c0;
+  --sage-dark:      #8faa86;
+  --lavender:       #d4cfe8;
+  --lavender-dark:  #9b93c4;
+  --peach:          #f2d9cc;
+  --peach-dark:     #d4907a;
+  --sky:            #c8dde8;
+  --sky-dark:       #7aaec4;
+  --butter:         #f0e8c0;
+  --butter-dark:    #c4a84a;
+  --danger:         #f5c6c0;
+  --danger-dark:    #c0504a;
+
+  /* Texte */
+  --text-primary:   #3a3530;
+  --text-secondary: #7a6f68;
+  --text-muted:     #b0a49c;
+
+  /* Espacements */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  /* Ombres */
+  --shadow-sm: 0 2px 8px rgba(58,53,48,0.06);
+  --shadow-md: 0 6px 24px rgba(58,53,48,0.09);
+}
+
+/* =============================================================================
+   2. RESET & BASE
+   ============================================================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--sage-dark);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+/* =============================================================================
+   3. LAYOUT
+   ============================================================================= */
+
+/* Header */
+.page-header {
+  background: var(--surface);
+  border-bottom: 1.5px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 28px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.brand-icon { font-size: 1.3rem; }
+
+.header-nav { display: flex; gap: 8px; }
+
+.nav-link {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-link:hover,
+.nav-link--active {
+  background: var(--surface-alt);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+/* Main */
+.page-main {
+  padding: 40px 20px 80px;
+}
+
+.page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.page-wrapper--narrow {
+  max-width: 760px;
+}
+
+.page-wrapper--wide {
+  max-width: 1400px;
+}
+
+/* Titre de page */
+.page-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.action-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* =============================================================================
+   4. TYPOGRAPHIE
+   ============================================================================= */
+.page-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+.page-title em {
+  font-style: italic;
+  color: var(--sage-dark);
+}
+
+.page-title small.title-parent-hint {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-style: normal;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.page-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* =============================================================================
+   5. COMPOSANTS
+   ============================================================================= */
+
+/* Card */
+.card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+  transition: box-shadow 0.2s;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+
+.card--detail { margin-bottom: 32px; }
+
+.card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.badge-sage     { background: var(--sage);     color: #4a7042; }
+.badge-lavender { background: var(--lavender); color: #5a5292; }
+.badge-peach    { background: var(--peach);    color: #a05030; }
+.badge-sky      { background: var(--sky);      color: #2a6a8a; }
+
+/* Pills (dans les card-title) */
+.pill {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+.pill-sage     { background: var(--sage);     color: #4a7042; }
+.pill-lavender { background: var(--lavender); color: #5a5292; }
+.pill-peach    { background: var(--peach);    color: #a05030; }
+
+/* Alertes */
+.alert {
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+  border: 1.5px solid transparent;
+}
+.alert-success {
+  background: var(--sage);
+  border-color: var(--sage-dark);
+  color: #2a5025;
+}
+.alert-error {
+  background: var(--peach);
+  border-color: var(--peach-dark);
+  color: #7a2510;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.breadcrumb a { color: var(--text-secondary); }
+.breadcrumb a:hover { color: var(--sage-dark); }
+
+/* Date chips */
+.date-chip {
+  display: inline-block;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: var(--surface-alt);
+  padding: 3px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+}
+.date-chip--sm { font-size: 0.72rem; padding: 2px 8px; }
+.date-chip--debut { background: var(--sky); border-color: var(--sky-dark); color: #2a6a8a; }
+
+/* Détail */
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 32px;
+}
+.detail-block { display: flex; flex-direction: column; gap: 4px; }
+.detail-block.full { grid-column: 1 / -1; }
+.detail-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.detail-value { font-size: 0.95rem; color: var(--text-primary); }
+.detail-value--muted { color: var(--text-muted); font-style: italic; }
+
+/* =============================================================================
+   6. FORMULAIRES
+   ============================================================================= */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+}
+.form-grid .full { grid-column: 1 / -1; }
+
+.dates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+label .required { color: var(--peach-dark); font-size: 0.9rem; }
+
+label .hint {
+  font-weight: 400;
+  font-size: 0.72rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.input,
+.textarea {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  background: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+}
+.input:focus,
+.textarea:focus {
+  border-color: var(--border-focus);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(176,160,148,0.15);
+}
+.input::placeholder,
+.textarea::placeholder { color: var(--text-muted); }
+.input--error { border-color: var(--peach-dark); }
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+.field-error {
+  font-size: 0.78rem;
+  color: var(--peach-dark);
+}
+
+.id-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
+.form-hint {
+  margin-top: 18px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Actions de formulaire */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 28px;
+  border-top: 1.5px solid var(--border);
+  margin-top: 8px;
+}
+
+/* =============================================================================
+   7. BOUTONS
+   ============================================================================= */
+.btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 11px 24px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--sage-dark);
+  color: white;
+  border-color: var(--sage-dark);
+  box-shadow: 0 4px 14px rgba(143,170,134,0.4);
+}
+.btn-primary:hover {
+  background: #7a9972;
+  box-shadow: 0 6px 20px rgba(143,170,134,0.5);
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: white;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+.btn-ghost:hover {
+  background: var(--surface-alt);
+  border-color: var(--border-focus);
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--danger-dark);
+}
+.btn-danger:hover {
+  background: var(--danger-dark);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-sm  { padding: 7px 16px; font-size: 0.82rem; }
+.btn-xs  { padding: 4px 10px; font-size: 0.78rem; }
+
+/* =============================================================================
+   8. LISTE DES TÂCHES
+   ============================================================================= */
+
+/* Barre de recherche */
+.search-bar { margin-bottom: 28px; }
+
+.search-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-input {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  outline: none;
+  width: 340px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.search-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(176,160,148,0.15);
+}
+.search-input::placeholder { color: var(--text-muted); }
+
+/* Grid des cartes */
+.tache-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.tache-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.tache-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.tache-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tache-card__nom {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+.tache-card__nom a { color: var(--text-primary); }
+.tache-card__nom a:hover { color: var(--sage-dark); text-decoration: none; }
+
+.tache-card__description {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  flex: 1;
+}
+
+.tache-card__dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tache-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* =============================================================================
+   9. VUE ARBRE
+   ============================================================================= */
+.tree-section { margin-top: 8px; }
+
+.tree-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+
+.tree-root { padding-left: 0; }
+
+/* Nœud */
+.tree-node {
+  margin-bottom: 8px;
+}
+
+.tree-node__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  transition: box-shadow 0.15s;
+}
+.tree-node__row:hover { box-shadow: var(--shadow-sm); }
+
+/* Bouton expand/collapse */
+.tree-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-muted);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: color 0.15s, transform 0.2s;
+}
+.tree-toggle:hover { color: var(--text-primary); }
+.tree-toggle.collapsed { transform: rotate(-90deg); }
+
+.tree-toggle-placeholder {
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.tree-node__content { flex: 1; min-width: 0; }
+
+.tree-node__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.tree-node__nom {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+.tree-node__nom:hover { color: var(--sage-dark); text-decoration: none; }
+
+.tree-node__dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tree-node__actions {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+/* Enfants indentés */
+.tree-node__children {
+  padding-left: 36px;
+  margin-top: 8px;
+  border-left: 2px solid var(--border);
+  margin-left: 12px;
+  padding-top: 4px;
+}
+
+/* =============================================================================
+   10. ÉTATS VIDES
+   ============================================================================= */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+.empty-state--sm { padding: 32px 20px; }
+
+.empty-state__icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 14px;
+  opacity: 0.6;
+}
+
+.empty-state .btn { margin-top: 16px; }
+
+/* =============================================================================
+   12. PAGE ARBRE — PLEINE HAUTEUR
+   ============================================================================= */
+
+body.arbre-page {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+body.arbre-page .page-header { flex-shrink: 0; }
+
+.flash-bar { flex-shrink: 0; padding: 6px 16px; }
+
+.header-inner--wide { max-width: 100%; gap: 12px; }
+.breadcrumb--header { flex: 1; margin: 0; }
+.header-actions     { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* =============================================================================
+   13. CONTENEUR PRINCIPAL MS PROJECT
+   ============================================================================= */
+
+/*
+ * Variables de largeur des colonnes fixes (partie gauche de chaque ligne).
+ * Modifier ici pour ajuster les proportions.
+ */
+:root {
+  --msp-col-toggle:  36px;
+  --msp-col-nom:     260px;
+  --msp-col-date:    72px;
+  --msp-col-actions: 76px;
+  --msp-left-width: calc(
+    var(--msp-col-toggle) +
+    var(--msp-col-nom) +
+    var(--msp-col-date) * 2 +
+    var(--msp-col-actions)
+  );
+  --msp-row-height: 34px;
+}
+
+/*
+ * Le conteneur scroll horizontalement en bloc :
+ * en-tête ET corps bougent ensemble → l'axe temporel
+ * reste toujours aligné avec les barres.
+ */
+.msp-container {
+  flex: 1;
+  overflow: auto;       /* scroll H et V ici */
+  min-width: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+/* =============================================================================
+   14. EN-TÊTE (sticky en haut)
+   ============================================================================= */
+
+.msp-head {
+  display: flex;
+  height: var(--msp-row-height);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--surface-alt);
+  border-bottom: 2px solid var(--border-focus);
+  min-width: max-content; /* s'étend avec le contenu */
+}
+
+.msp-head-left {
+  display: flex;
+  width: var(--msp-left-width);
+  min-width: var(--msp-left-width);
+  flex-shrink: 0;
+  border-right: 2px solid var(--border-focus);
+}
+
+.msp-head-gantt {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* =============================================================================
+   15. LIGNES DE TÂCHES
+   ============================================================================= */
+
+.msp-body { min-width: max-content; }
+
+/* Chaque ligne = flex horizontal sur toute la largeur */
+.msp-row {
+  display: flex;
+  align-items: center;
+  height: var(--msp-row-height);
+  border-bottom: 1px solid var(--border);
+  min-width: max-content;
+  background: var(--surface);
+  transition: background 0.1s;
+}
+.msp-row:hover          { background: #f0ede9; }
+.msp-row--racine        { background: var(--sage); font-weight: 600; }
+.msp-row--racine:hover  { background: #bdd4b5; }
+
+/* Partie gauche fixe de la ligne */
+.msp-left-part {
+  display: flex;
+  align-items: center;
+  width: var(--msp-left-width);
+  min-width: var(--msp-left-width);
+  flex-shrink: 0;
+  height: 100%;
+  border-right: 2px solid var(--border);
+}
+
+/* =============================================================================
+   16. CELLULES
+   ============================================================================= */
+
+.msp-col {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 6px;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 1px solid var(--border);
+  box-sizing: border-box;
+}
+
+.msp-col--label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.msp-col--toggle  { width: var(--msp-col-toggle);  min-width: var(--msp-col-toggle);  flex-shrink: 0; gap: 2px; padding: 0 4px; }
+.msp-col--nom     { width: var(--msp-col-nom);     min-width: var(--msp-col-nom);     gap: 4px; }
+.msp-col--date    { width: var(--msp-col-date);    min-width: var(--msp-col-date);    justify-content: center; }
+.msp-col--actions { width: var(--msp-col-actions); min-width: var(--msp-col-actions); border-right: none; gap: 1px; }
+
+.msp-col--nom-racine { font-weight: 600; }
+.msp-col--retard     { color: var(--peach-dark); font-weight: 600; }
+
+/* Indentation */
+.msp-indent { display: inline-block; flex-shrink: 0; height: 1px; }
+
+/* Bouton toggle */
+.msp-toggle-btn {
+  width: 18px; height: 18px;
+  background: none; border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 3px;
+  flex-shrink: 0;
+  padding: 0;
+  transition: color 0.12s, transform 0.15s;
+  line-height: 1;
+}
+.msp-toggle-btn:hover   { color: var(--text-primary); background: var(--border); }
+.msp-toggle-btn.collapsed { transform: rotate(-90deg); }
+
+.msp-leaf { color: var(--text-muted); font-size: 1rem; width: 18px; text-align: center; flex-shrink: 0; }
+
+/* Lien nom */
+.msp-nom-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  flex: 1; overflow: hidden; text-overflow: ellipsis;
+}
+.msp-nom-link:hover { color: var(--sage-dark); text-decoration: underline; }
+
+/* Badges */
+.msp-badge {
+  width: 14px; height: 14px; border-radius: 50%;
+  font-size: 0.6rem; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.msp-badge--retard   { background: var(--peach);    color: var(--peach-dark); }
+.msp-badge--corrigee { background: var(--lavender); color: var(--lavender-dark); }
+
+.msp-na { color: var(--text-muted); }
+
+/* Boutons inline après le nom dans l'arbre MS Project */
+.msp-inline-actions {
+  display: none; /* visibles uniquement au hover de la ligne */
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.msp-row:hover .msp-inline-actions {
+  display: inline-flex;
+}
+
+.msp-inline-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.1s, border-color 0.1s;
+  padding: 0;
+}
+.msp-inline-btn:hover {
+  background: var(--surface-alt);
+  border-color: var(--border);
+  text-decoration: none;
+}
+.msp-inline-btn--danger:hover {
+  background: var(--peach);
+  border-color: var(--peach-dark);
+}
+
+
+.msp-btn {
+  width: 20px; height: 20px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; background: none; cursor: pointer;
+  font-size: 0.75rem; color: var(--text-secondary);
+  border-radius: 3px; text-decoration: none; flex-shrink: 0; padding: 0;
+  transition: background 0.1s, color 0.1s;
+}
+.msp-btn:hover           { background: var(--border); color: var(--text-primary); text-decoration: none; }
+.msp-btn--danger:hover   { background: var(--peach);  color: var(--peach-dark); }
+
+/* =============================================================================
+   17. CELLULE GANTT (partie droite de chaque ligne)
+   ============================================================================= */
+
+/*
+ * La cellule Gantt prend tout l'espace à droite de la partie fixe.
+ * Sa largeur est calculée par JS en fonction du nombre de jours affichés.
+ * Elle est relative pour positionner les barres en absolute.
+ */
+.msp-gantt-cell {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Barre de tâche */
+.msp-bar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 14px;
+  border-radius: 3px;
+  min-width: 3px;
+  display: flex; align-items: center;
+  padding: 0 5px;
+  font-size: 0.65rem; font-weight: 600; color: white;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+  cursor: default;
+  transition: filter 0.12s;
+}
+.msp-bar:hover { filter: brightness(1.12); }
+
+/* Barre racine plus haute et différente */
+.msp-bar--racine   { height: 18px; border-radius: 2px; }
+
+.msp-bar--normal   { background: var(--sage-dark); }
+.msp-bar--retard   { background: var(--peach-dark); }
+.msp-bar--corrigee { background: var(--lavender-dark); }
+.msp-bar--racine-style { background: var(--sage-dark); opacity: 0.55; }
+
+/* Ligne verticale séparatrice de grille (fond de chaque cellule) */
+.msp-grid-line {
+  position: absolute;
+  top: 0; bottom: 0; width: 1px;
+  background: var(--border);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Ligne aujourd'hui */
+.msp-today-line {
+  position: absolute;
+  top: 0; bottom: 0; width: 2px;
+  background: var(--peach-dark);
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* =============================================================================
+   18. AXE TEMPOREL (en-tête Gantt)
+   ============================================================================= */
+
+.gantt-axis-label {
+  position: absolute;
+  top: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
+  box-sizing: border-box;
+  padding: 0 4px;
+  white-space: nowrap; overflow: hidden;
+}
+
+/* =============================================================================
+   19. LÉGENDE
+   ============================================================================= */
+
+.msp-children {
+  border-left: 2px solid var(--border);
+  margin-left: 18px;
+}
+.msp-legende {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.msp-legende__item  { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--text-muted); }
+.msp-legende__dot   { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* =============================================================================
+   20. RESPONSIVE
+   ============================================================================= */
+@media (max-width: 768px) {
+  :root { --msp-col-nom: 160px; --msp-col-date: 60px; --msp-col-actions: 66px; }
+  .header-actions .btn + .btn + .btn { display: none; }
+}
+
+/*
+ * Sur la page arbre, on supprime le padding du body et on laisse
+ * le wrapper MS Project occuper toute la hauteur disponible.
+ */
+body.arbre-page { padding: 0; overflow: hidden; }
+body.arbre-page .page-main { padding: 0; }
+
+.flash-bar { padding: 8px 20px; }
+
+.header-inner--wide {
+  max-width: 100%;
+  gap: 16px;
+}
+
+.header-center { flex: 1; }
+.breadcrumb--header { margin: 0; }
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* =============================================================================
+   13. MS PROJECT — WRAPPER PRINCIPAL
+   ============================================================================= */
+
+/*
+ * Le wrapper occupe toute la hauteur de la fenêtre moins le header (60px).
+ * Les deux colonnes sont côte à côte, séparées par un diviseur.
+ * Le scroll vertical est partagé (une seule scrollbar à droite).
+ */
+.msproject-wrapper {
+  display: flex;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+  background: var(--bg);
+  user-select: none; /* évite la sélection de texte au drag */
+}
+
+/* =============================================================================
+   14. COLONNE GAUCHE — Tableau des tâches
+   ============================================================================= */
+
+.msproject-left {
+  width: 480px;
+  min-width: 280px;
+  max-width: 70vw;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-right: 2px solid var(--border);
+  overflow: hidden; /* scroll géré par JS sur les deux colonnes ensemble */
+  flex-shrink: 0;
+}
+
+/* En-tête fixe */
+.msp-header {
+  background: var(--surface-alt);
+  border-bottom: 2px solid var(--border);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Corps scrollable */
+#msp-body-left {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  scrollbar-width: thin;
+}
+
+/* Ligne générique */
+.msp-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+}
+
+.msp-row--tache {
+  transition: background 0.1s;
+  cursor: default;
+}
+.msp-row--tache:hover { background: var(--surface-alt); }
+.msp-row--racine { background: var(--sage); font-weight: 600; }
+.msp-row--racine:hover { background: var(--sage); }
+
+/* Cellules */
+.msp-cell {
+  padding: 0 8px;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.msp-cell--head {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Largeurs des cellules */
+.msp-cell--toggle  { width: 40px;  min-width: 40px;  flex-shrink: 0; gap: 0; padding: 0 4px; }
+.msp-cell--nom     { flex: 1;      min-width: 0; }
+.msp-cell--date    { width: 72px;  min-width: 72px;  flex-shrink: 0; justify-content: center; }
+.msp-cell--actions { width: 80px;  min-width: 80px;  flex-shrink: 0; gap: 2px; }
+
+.msp-cell--nom-racine { font-weight: 600; }
+.msp-cell--retard     { color: var(--peach-dark); font-weight: 600; }
+
+/* Indentation */
+.msp-indent { display: inline-block; flex-shrink: 0; }
+
+/* Bouton toggle expand/collapse */
+.msp-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: color 0.15s, transform 0.15s;
+  padding: 0;
+}
+.msp-toggle-btn:hover { color: var(--text-primary); background: var(--border); }
+.msp-toggle-btn.collapsed { transform: rotate(-90deg); }
+
+.msp-leaf-dot {
+  width: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* Lien nom */
+.msp-nom-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.msp-nom-link:hover { color: var(--sage-dark); text-decoration: underline; }
+
+/* Badges compacts */
+.msp-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+.msp-badge--retard  { background: var(--peach);  color: var(--peach-dark); }
+.msp-badge--corrigee { background: var(--lavender); color: var(--lavender-dark); }
+
+.msp-empty { color: var(--text-muted); }
+
+/* Boutons d'action inline */
+.msp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
+  padding: 0;
+}
+.msp-btn:hover { background: var(--border); color: var(--text-primary); text-decoration: none; }
+.msp-btn--danger:hover { background: var(--peach); color: var(--peach-dark); }
+
+/* =============================================================================
+   15. DIVISEUR REDIMENSIONNABLE
+   ============================================================================= */
+
+.msproject-divider {
+  width: 5px;
+  background: var(--border);
+  cursor: col-resize;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  position: relative;
+  z-index: 20;
+}
+.msproject-divider:hover,
+.msproject-divider.dragging { background: var(--sage-dark); }
+
+/* =============================================================================
+   16. COLONNE DROITE — Gantt
+   ============================================================================= */
+
+.msproject-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  min-width: 0;
+}
+
+/* Axe temporel (en-tête fixe) */
+.gantt-axis {
+  height: 36px;
+  min-height: 36px;
+  background: var(--surface-alt);
+  border-bottom: 2px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.gantt-axis__label {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
+  box-sizing: border-box;
+  padding: 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Corps des barres Gantt */
+.gantt-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  scrollbar-width: thin;
+}
+
+/* Ligne Gantt (hauteur identique à msp-row) */
+.gantt-row {
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+/* Bandes de week-ends (fond) */
+.gantt-weekend {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: rgba(0,0,0,0.025);
+  pointer-events: none;
+}
+
+/* Barre de tâche */
+.gantt-bar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 16px;
+  border-radius: 4px;
+  min-width: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+  transition: opacity 0.15s, filter 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.gantt-bar:hover { filter: brightness(1.1); }
+
+/* Barre racine : plus haute */
+.gantt-bar--racine {
+  height: 20px;
+  border-radius: 3px;
+}
+
+.gantt-bar--normal   { background: var(--sage-dark); }
+.gantt-bar--retard   { background: var(--peach-dark); }
+.gantt-bar--corrigee { background: var(--lavender-dark); }
+.gantt-bar--racine-style { background: var(--sage-dark); opacity: 0.6; }
+
+/* Ligne "aujourd'hui" */
+.gantt-today-line {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: var(--peach-dark);
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Lignes verticales de grille */
+.gantt-grid-line {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+/* =============================================================================
+   17. LÉGENDE
+   ============================================================================= */
+.gantt-legende {
+  display: flex;
+  gap: 18px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.gantt-legende__item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.72rem; color: var(--text-muted);
+}
+.gantt-legende__dot {
+  width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
+}
+
+/* =============================================================================
+   18. RESPONSIVE
+   ============================================================================= */
+@media (max-width: 768px) {
+  .msproject-wrapper { flex-direction: column; height: auto; overflow: auto; }
+  .msproject-left    { width: 100%; max-width: 100%; border-right: none; border-bottom: 2px solid var(--border); }
+  .msproject-right   { height: 300px; }
+  .msproject-divider { display: none; }
+  .header-actions .btn { display: none; }
+  .header-actions .btn:first-child { display: inline-flex; }
+}
+
+/*
+ * Layout pleine largeur pour la vue arbre.
+ * La sidebar (arbre) occupe ~40% et le panneau détail+gantt ~60%.
+ * Pas de max-width pour utiliser tout l'espace disponible.
+ */
+.arbre-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  min-height: calc(100vh - 60px); /* 60px = hauteur header */
+}
+
+/* Colonne gauche — arbre */
+.arbre-sidebar {
+  background: var(--surface);
+  border-right: 1.5px solid var(--border);
+  padding: 28px 24px;
+  overflow-y: auto;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+}
+
+.breadcrumb--sidebar { margin-bottom: 16px; }
+
+.sidebar-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sidebar-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.sidebar-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.tree-controls {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+/* Colonne droite — détail + gantt */
+.arbre-detail {
+  background: var(--bg);
+  padding: 28px 32px;
+  overflow-y: auto;
+}
+
+/* =============================================================================
+   13. PANNEAU DÉTAIL (colonne droite)
+   ============================================================================= */
+
+.detail-panel {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.detail-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.detail-panel__title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.detail-panel__badges { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+
+.detail-panel__description {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-panel__dates {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.detail-date-item { display: flex; flex-direction: column; gap: 4px; }
+
+.detail-date-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.detail-date-value { font-size: 0.9rem; color: var(--text-primary); }
+
+.detail-panel__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* =============================================================================
+   14. TIMELINE PANEL (colonne droite)
+   ============================================================================= */
+
+.timeline-panel {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-panel__title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+
+.gantt-container { min-height: 80px; }
+
+.gantt-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-style: italic;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* En-tête dates */
+.gantt-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+.gantt-header__date {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* Ligne Gantt */
+.gantt-row-rendered {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.gantt-label {
+  width: 160px;
+  min-width: 160px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gantt-label a { color: inherit; text-decoration: none; }
+.gantt-label a:hover { color: var(--sage-dark); }
+.gantt-label--racine { font-weight: 600; color: var(--text-primary); }
+
+.gantt-track {
+  flex: 1;
+  height: 24px;
+  background: var(--surface-alt);
+  border-radius: 99px;
+  position: relative;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.gantt-bar {
+  position: absolute;
+  height: 100%;
+  border-radius: 99px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.15s;
+}
+.gantt-bar:hover { opacity: 0.82; }
+.gantt-bar--normal   { background: var(--sage-dark); }
+.gantt-bar--retard   { background: var(--peach-dark); }
+.gantt-bar--corrigee { background: var(--lavender-dark); }
+.gantt-bar--racine   { background: var(--sage-dark); opacity: 0.4; }
+
+.gantt-today-marker {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: var(--peach-dark);
+  z-index: 5;
+}
+
+/* Légende */
+.gantt-legende {
+  display: flex;
+  gap: 18px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.gantt-legende__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.gantt-legende__dot {
+  width: 10px; height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* =============================================================================
+   15. TIMELINE INLINE dans les nœuds de l'arbre
+   ============================================================================= */
+
+/*
+ * Barre de timeline affichée à droite de chaque ligne du nœud.
+ * Occupe l'espace disponible entre le contenu textuel et les boutons d'action.
+ */
+.tree-node__timeline {
+  flex: 1;
+  min-width: 80px;
+  max-width: 200px;
+  padding: 0 8px;
+}
+
+.timeline-track {
+  height: 10px;
+  background: var(--surface-alt);
+  border-radius: 99px;
+  position: relative;
+  border: 1px solid var(--border);
+  overflow: visible;
+}
+
+.timeline-bar {
+  position: absolute;
+  height: 100%;
+  border-radius: 99px;
+  top: 0;
+  min-width: 3px;
+  transition: opacity 0.15s;
+}
+.timeline-bar:hover { opacity: 0.75; }
+.timeline-bar--normal   { background: var(--sage-dark); }
+.timeline-bar--retard   { background: var(--peach-dark); }
+.timeline-bar--corrigee { background: var(--lavender-dark); }
+
+.timeline-today {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--peach-dark);
+  border-radius: 2px;
+  display: none; /* affiché par JS si dans la plage */
+}
+
+/* Nœud sélectionné */
+.tree-node__row--selected {
+  background: var(--sage);
+  border-color: var(--sage-dark);
+}
+
+/* =============================================================================
+   16. RESPONSIVE
+   ============================================================================= */
+@media (max-width: 1024px) {
+  .arbre-layout { grid-template-columns: 1fr; }
+  .arbre-sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .detail-panel__dates { grid-template-columns: repeat(2, 1fr); }
+  .tree-node__timeline { display: none; } /* masqué sur mobile */
+}
+
+@media (max-width: 640px) {
+  .detail-panel__dates { grid-template-columns: 1fr; }
+}
+
+.gantt-section { margin-bottom: 36px; }
+
+.gantt-wrapper {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  overflow-x: auto;
+}
+
+/* En-tête avec les dates */
+.gantt-header {
+  display: flex;
+  margin-bottom: 12px;
+  padding-left: 200px; /* largeur colonne nom */
+  border-bottom: 1.5px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.gantt-header__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+  flex: 1;
+}
+
+/* Ligne Gantt */
+.gantt-row-rendered {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  min-height: 36px;
+}
+
+.gantt-row-rendered--racine .gantt-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Colonne nom */
+.gantt-label {
+  width: 200px;
+  min-width: 200px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.gantt-label a {
+  color: inherit;
+  text-decoration: none;
+}
+.gantt-label a:hover { color: var(--sage-dark); }
+
+/* Zone de la barre */
+.gantt-track {
+  flex: 1;
+  height: 28px;
+  background: var(--surface-alt);
+  border-radius: 99px;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+/* Barre de progression */
+.gantt-bar {
+  position: absolute;
+  height: 100%;
+  border-radius: 99px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.2s;
+  cursor: default;
+}
+.gantt-bar:hover { opacity: 0.85; }
+
+/* Couleurs des barres */
+.gantt-bar--normal   { background: var(--sage-dark); }
+.gantt-bar--retard   { background: var(--peach-dark); }
+.gantt-bar--corrigee { background: var(--lavender-dark); }
+.gantt-bar--racine   { background: var(--sage-dark); opacity: 0.5; }
+
+/* Ligne "aujourd'hui" */
+.gantt-today-line {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--peach-dark);
+  border-radius: 2px;
+  z-index: 10;
+}
+.gantt-today-line::after {
+  content: "Aujourd'hui";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  color: var(--peach-dark);
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+/* Légende */
+.gantt-legende {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.gantt-legende__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.gantt-legende__dot {
+  width: 12px; height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* Contrôles de l'arbre */
+.tree-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.tree-title-row .tree-title { margin-bottom: 0; }
+.tree-controls { display: flex; gap: 8px; }
+
+/* =============================================================================
+   13. RESPONSIVE (suite)
+   ============================================================================= */
+@media (max-width: 768px) {
+  .gantt-label { width: 120px; min-width: 120px; }
+  .gantt-header { padding-left: 120px; }
+}
+@media (max-width: 768px) {
+  .form-grid        { grid-template-columns: 1fr; }
+  .form-grid .full  { grid-column: 1; }
+  .dates-grid       { grid-template-columns: 1fr; }
+  .detail-grid      { grid-template-columns: 1fr; }
+  .detail-block.full { grid-column: 1; }
+  .tache-grid       { grid-template-columns: 1fr; }
+  .page-title-row   { flex-direction: column; align-items: flex-start; }
+  .search-form      { flex-wrap: wrap; }
+  .search-input     { width: 100%; }
+  .card             { padding: 22px 18px; }
+  .tree-node__children { padding-left: 16px; }
+}
+
+/* =============================================================================
+   15. ÉCRAN DÉTAIL / ÉDITION
+   ============================================================================= */
+
+.detail-section {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.detail-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.detail-section__title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sage);
+  color: var(--sage-dark);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  min-width: 28px;
+}
+
+/* ===== FILTRES ===== */
+.detail-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.detail-filter-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.detail-filter-check input[type="checkbox"] {
+  accent-color: var(--sage-dark);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+/* ===== PANELS SOUS-TÂCHES ===== */
+.sous-tache-panel {
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  padding: 0;
+}
+
+.sous-tache-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-focus);
+}
+
+.tache-card-link {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 22px;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.tache-card-link:hover { text-decoration: none; color: inherit; }
+
+.tache-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tache-card__nom {
+  font-weight: 600;
+  font-size: 0.97rem;
+  color: var(--text-primary);
+  flex: 1;
+  min-width: 0;
+}
+
+.tache-card__desc {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.tache-card__meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tache-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.tache-card__arrow {
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: transform 0.15s, color 0.15s;
+}
+
+.tache-card-link:hover .tache-card__arrow {
+  transform: translateX(4px);
+  color: var(--sage-dark);
+}
+
+.sous-taches-count {
+  font-size: 0.8rem;
+  color: var(--sage-dark);
+  font-weight: 500;
+}
+
+.sous-taches-count--empty {
+  color: var(--text-muted);
+}
+
+/* Badges statut */
+.badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badge-retard    { background: var(--peach);    color: var(--peach-dark); }
+.badge-replanifie{ background: var(--lavender); color: var(--lavender-dark); }
+.badge-termine   { background: #d4ead4;         color: #3a6b3a; }
+.badge-en-cours  { background: var(--sage);     color: var(--sage-dark); }
+.badge-a-venir   { background: var(--sky);      color: var(--sky-dark); }
+
+/* Meta chips dates */
+.meta-chip {
+  font-size: 0.78rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+.meta-chip--sage    { background: var(--sage);    color: var(--sage-dark); }
+.meta-chip--lavender{ background: var(--lavender);color: var(--lavender-dark); }
+.meta-chip--peach   { background: var(--peach);   color: var(--peach-dark); }
+
+/* Panel caché par le filtre */
+.sous-tache-panel--hidden { display: none !important; }
+
+/* =============================================================================
+   16. PANEL INFO COMPACT (écran détail)
+   ============================================================================= */
+
+.detail-compact {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+}
+
+/* Ligne 1 : badge type + nom + boutons */
+.compact-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.compact-type-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--sage-dark);
+  background: var(--sage);
+  border-radius: 20px;
+  padding: 2px 9px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.compact-nom-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.compact-nom-input {
+  font-size: 0.97rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  height: 34px;
+}
+
+.compact-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+/* Ligne 2 : dates en ligne */
+.compact-dates {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  padding: 7px 10px;
+  background: var(--surface-alt);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.compact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.compact-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.compact-label .hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 4px;
+}
+
+.compact-date-input {
+  padding: 4px 7px;
+  height: 30px;
+  font-size: 0.83rem;
+  width: 135px;
+}
+
+.compact-readonly {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Ligne 3 : description compacte */
+.compact-desc { }
+
+.compact-desc-input {
+  width: 100%;
+  resize: none;
+  font-size: 0.86rem;
+  padding: 6px 10px;
+  line-height: 1.5;
+  min-height: unset;
+}
+
+/* =============================================================================
+   17. DÉPENDANCES (prédécesseurs + successeurs) dans le panel compact
+   ============================================================================= */
+
+.compact-deps {
+  display: flex;
+  gap: 0;
+  align-items: flex-start;
+  margin-top: 8px;
+  padding: 7px 10px;
+  background: var(--surface-alt);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.compact-deps__col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.compact-deps__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.compact-deps__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.compact-deps__sep {
+  width: 1px;
+  background: var(--border);
+  align-self: stretch;
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+.compact-deps__empty {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* Chips dépendances */
+.dep-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dep-chip--pred {
+  background: var(--lavender);
+  border: 1px solid var(--lavender-dark);
+  color: var(--lavender-dark);
+  padding-right: 4px;
+}
+
+.dep-chip--succ {
+  background: #e6f4ea;
+  border: 1px solid #7cb98a;
+  color: #3a7d52;
+}
+
+.dep-chip__link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.dep-chip__link:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dep-chip__date {
+  font-weight: 400;
+  font-size: 0.72rem;
+  opacity: 0.8;
+}
+
+.dep-chip__del {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--lavender-dark);
+  font-size: 0.68rem;
+  padding: 0 1px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: background 0.12s, color 0.12s;
+  margin-left: 1px;
+}
+
+.dep-chip__del:hover {
+  background: var(--lavender-dark);
+  color: white;
+}
+
+/* Formulaire d'ajout inline */
+.dep-add-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dep-select {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 8px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+  max-width: 200px;
+}
+
+.dep-select:focus { border-color: var(--lavender-dark); }
+
+.dep-add-btn {
+  background: var(--lavender);
+  border: 1px solid var(--lavender-dark);
+  color: var(--lavender-dark);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
+}
+
+.dep-add-btn:hover {
+  background: var(--lavender-dark);
+  color: white;
+}
+
+/* =============================================================================
+   18. SVG OVERLAY DÉPENDANCES
+   ============================================================================= */
+
+/* Conteneur scrollable horizontal pour le graphe de dépendances */
+.tache-grid-scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-bottom: 8px; /* espace pour la scrollbar */
+}
+
+.tache-grid-wrap {
+  position: relative;
+  display: inline-block; /* s'étend à la largeur de son contenu */
+  min-width: 100%;
+  /* En mode topo (dépendances) : hauteur calculée par JS, cards en absolute.
+     En mode flex (pas de dépendances) : display:flex flex-wrap:wrap appliqué par JS. */
+}
+
+/* Mode flex : les cards reprennent leur flux normal */
+.tache-grid-wrap[data-flex-mode="true"] {
+  position: static;
+}
+.tache-grid-wrap[data-flex-mode="true"] .tache-card {
+  position: static !important;
+}
+
+.deps-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  overflow: visible;
+  /* pas de z-index : le SVG est en premier dans le DOM,
+     les cards absolute viennent après et passent naturellement par-dessus */
+}
+
+/* Les cards sont positionnées en absolute par JS */
+.tache-grid-wrap .tache-card {
+  box-sizing: border-box;
+}
+
+/* =============================================================================
+   ONGLETS
+   ============================================================================= */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.tab {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab:hover {
+  background: var(--surface-hover, #f0ede8);
+  color: var(--text-primary);
+}
+
+.tab--active {
+  background: var(--primary, #6a9c6a);
+  border-color: var(--primary, #6a9c6a);
+  color: #fff;
+}
+
+.tab--active .badge-count {
+  background: rgba(255,255,255,0.3);
+  color: #fff;
+}
+
+/* =============================================================================
+   KANBAN
+   ============================================================================= */
+
+.kanban-board {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 4px 0 8px;
+}
+
+.kanban-col {
+  flex: 1;
+  min-width: 0;
+  border-radius: 14px;
+  background: #f7f5f2;
+  border: 1.5px solid var(--border, #e2ddd6);
+  display: flex;
+  flex-direction: column;
+}
+
+.kanban-col__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1.5px solid var(--border, #e2ddd6);
+  border-radius: 12px 12px 0 0;
+}
+
+.kanban-col__header--backlog  { background: #eeeaf6; }
+.kanban-col__header--en-cours { background: #e6f0e6; }
+.kanban-col__header--termine  { background: #e6efe6; }
+
+.kanban-col__title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary, #3a3530);
+}
+
+.kanban-col__count {
+  background: rgba(0,0,0,0.08);
+  color: var(--text-secondary, #6b6560);
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.kanban-col__body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 80px;
+}
+
+.kanban-col__body--drag-over {
+  background: rgba(106,156,106,0.08);
+  border-radius: 0 0 12px 12px;
+}
+
+/* Kanban card */
+.kanban-card {
+  background: #fdfcfb;
+  border: 1.5px solid var(--border, #e2ddd6);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: grab;
+  transition: box-shadow .15s, transform .1s;
+  user-select: none;
+}
+
+.kanban-card:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,.1);
+  transform: translateY(-1px);
+}
+
+.kanban-card--dragging {
+  opacity: .5;
+  cursor: grabbing;
+}
+
+.kanban-card__nom {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text-primary, #3a3530);
+  margin-bottom: 6px;
+}
+
+.kanban-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* =============================================================================
+   TOAST
+   ============================================================================= */
+
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  max-width: 380px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.15);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .25s, transform .25s;
+}
+
+.toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast--info {
+  background: #e6f0e6;
+  color: #2d5a2d;
+  border: 1.5px solid #b8d8b8;
+}
+
+.toast--erreur {
+  background: #fdecea;
+  color: #7a2020;
+  border: 1.5px solid #f0b8b8;
+}
+
+/* Badges statut Kanban dans les cards dépendances */
+.badge-kanban {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge-kanban--backlog  { background: #eeebf6; color: #6b5fa0; }
+.badge-kanban--en-cours { background: #e6f0e6; color: #3a6b3a; }
+.badge-kanban--termine  { background: #d4ead4; color: #2d5a2d; }
+
+/* =============================================================================
+   TABLEAU DE BORD
+   ============================================================================= */
+
+.tdb-bloc {
+  background: #fdfcfb;
+  border: 1.5px solid var(--border, #e2ddd6);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+
+.tdb-bloc__titre {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #3a3530);
+  margin: 0 0 14px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Bloc 1 — compteurs */
+.tdb-compteurs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.tdb-compteur {
+  flex: 1;
+  min-width: 80px;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tdb-compteur__valeur {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tdb-compteur__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.tdb-compteur--backlog  { background: #eeeaf6; color: #6b5fa0; }
+.tdb-compteur--en-cours { background: #e6f0e6; color: #3a6b3a; }
+.tdb-compteur--termine  { background: #d4ead4; color: #2d5a2d; }
+.tdb-compteur--total    { background: #f0ede8; color: #5a5248; }
+
+/* Barre de progression */
+.tdb-progress {
+  height: 10px;
+  background: #e8e4df;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.tdb-progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6a9c6a, #4a7c4a);
+  border-radius: 6px;
+  transition: width .4s ease;
+  min-width: 2px;
+}
+
+.tdb-progress__label {
+  font-size: 0.8rem;
+  color: var(--text-muted, #8a8480);
+  text-align: right;
+}
+
+/* Tables */
+.tdb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.tdb-table thead tr {
+  border-bottom: 1.5px solid var(--border, #e2ddd6);
+}
+
+.tdb-table th {
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-muted, #8a8480);
+}
+
+.tdb-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0ede8;
+  vertical-align: middle;
+}
+
+.tdb-table tr:last-child td {
+  border-bottom: none;
+}
+
+.tdb-link {
+  color: var(--text-primary, #3a3530);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.tdb-link:hover {
+  color: var(--primary, #6a9c6a);
+  text-decoration: underline;
+}
+
+.tdb-date {
+  color: var(--text-muted, #8a8480);
+  white-space: nowrap;
+  font-size: 0.82rem;
+}
+
+.tdb-date--alerte {
+  color: #c0442a;
+  font-weight: 600;
+}
+
+.tdb-vide {
+  color: var(--text-muted, #8a8480);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* =============================================================================
+   JOURNAL DE TRAÇAGE
+   ============================================================================= */
+
+.journal-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  align-items: center;
+}
+
+.journal-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid var(--border, #e2ddd6);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: #fdfcfb;
+  color: var(--text-primary, #3a3530);
+  transition: border-color .15s;
+}
+
+.journal-input:focus {
+  outline: none;
+  border-color: var(--primary, #6a9c6a);
+}
+
+.journal-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.journal-entree {
+  padding: 12px 14px;
+  border-left: 3px solid var(--border, #e2ddd6);
+  background: #fdfcfb;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 8px;
+  transition: border-color .15s;
+}
+
+.journal-entree--manuelle {
+  border-left-color: var(--primary, #6a9c6a);
+  background: #f6faf6;
+}
+
+.journal-entree__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.journal-type-icon {
+  font-size: 0.9rem;
+}
+
+.journal-date {
+  font-size: 0.75rem;
+  color: var(--text-muted, #8a8480);
+  font-weight: 500;
+}
+
+.journal-badge-remonte {
+  font-size: 0.72rem;
+  background: #f0ede8;
+  color: var(--text-muted, #8a8480);
+  border-radius: 8px;
+  padding: 1px 7px;
+  font-weight: 600;
+}
+
+.journal-entree__corps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.journal-message {
+  font-size: 0.875rem;
+  color: var(--text-primary, #3a3530);
+  line-height: 1.4;
+}
+
+.journal-del-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted, #8a8480);
+  font-size: 0.72rem;
+  padding: 1px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: background .12s, color .12s;
+}
+
+.journal-del-btn:hover {
+  background: #fdecea;
+  color: #c0442a;
+}
+
+/* =============================================================================
+   ONGLET DATES — frise chronologique
+   ============================================================================= */
+
+.frise-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.frise-row {
+  display: grid;
+  grid-template-columns: 200px 1fr 260px 28px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: background .12s;
+}
+
+.frise-row:hover {
+  background: #f7f5f2;
+}
+
+.frise-row--parent {
+  background: #f0ede8;
+  border-radius: 10px;
+  padding: 10px 8px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.frise-sep {
+  height: 1.5px;
+  background: var(--border, #e2ddd6);
+  margin: 6px 0 10px;
+}
+
+.frise-nom {
+  font-size: 0.85rem;
+  color: var(--text-primary, #3a3530);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.frise-barre-wrap {
+  position: relative;
+  height: 28px;
+}
+
+.frise-canvas {
+  display: block;
+  width: 100%;
+  height: 28px;
+}
+
+/* Chips de dates */
+.frise-row--header {
+  padding: 2px 4px 6px;
+  pointer-events: none;
+}
+
+.frise-col-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted, #8a8480);
+  width: 72px;
+  text-align: center;
+}
+
+.frise-dates {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Chip générique */
+.frise-date-chip {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  width: 72px;
+  text-align: center;
+  transition: background .12s, box-shadow .12s;
+}
+
+/* Début : lavande, lecture seule */
+.frise-date-chip--debut {
+  background: #eeeaf6;
+  color: #6b5fa0;
+}
+
+.frise-date-chip--readonly {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Input date de fin */
+.frise-input-fin {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border: 1.5px solid var(--border, #e2ddd6);
+  border-radius: 8px;
+  background: #e8f0fa;
+  color: #3a6090;
+  width: 130px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+
+.frise-input-fin:hover,
+.frise-input-fin:focus {
+  border-color: #7a9cc8;
+  outline: none;
+  background: #d4e4f7;
+}
+
+/* Fin corrigée : orange */
+.frise-input-fin--corrigee {
+  background: #fdf0e6;
+  color: #b05a10;
+  border-color: #e8a87c;
+}
+.frise-input-fin--corrigee:hover,
+.frise-input-fin--corrigee:focus {
+  background: #fae0c8;
+  border-color: #c0662a;
+}
+
+/* Popup édition supprimé — remplacé par input inline */
+
+/* Légende onglet Dates */
+.frise-legende {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 8px 4px 14px;
+  flex-wrap: wrap;
+}
+
+.frise-legende-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-muted, #8a8480);
+}
+
+.frise-legende-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.frise-legende-dot--initiale { background: #7a9cc8; }
+.frise-legende-dot--corrigee { background: #e8a87c; }
+
+/* Colonne et icône alerte dépassement */
+.frise-alerte-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+}
+
+.frise-alerte-icon {
+  font-size: 1.4rem;
+  cursor: default;
+  line-height: 1;
+}
+
+.frise-legende-item .frise-alerte-icon {
+  font-size: 1.1rem;
+}
+
+/* SVG overlay flèches frise */
+.frise-zone {
+  position: relative;
+}
+
+.frise-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
+}

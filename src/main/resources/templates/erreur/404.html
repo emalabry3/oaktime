@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OakTime — Page introuvable</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/tache.css}"/>
+  <style>
+    .error-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 70vh;
+      text-align: center;
+      gap: 20px;
+    }
+    .error-code {
+      font-family: 'DM Serif Display', serif;
+      font-size: 6rem;
+      color: var(--sage-dark);
+      line-height: 1;
+      opacity: 0.4;
+    }
+    .error-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      color: var(--text-primary);
+    }
+    .error-message {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      max-width: 420px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <a th:href="@{/taches}" class="brand-link">
+        <span class="brand-icon">🌿</span>
+        <span class="brand-name">OakTime</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="page-main">
+  <div class="error-page">
+    <div class="error-code">404</div>
+    <h1 class="error-title">Page introuvable</h1>
+    <p class="error-message"
+       th:text="${messageErreur} ?: 'La ressource que vous cherchez n\'existe pas ou a été supprimée.'">
+    </p>
+    <a th:href="@{/taches}" class="btn btn-primary">← Retour à mes tâches</a>
+  </div>
+</main>
+
+</body>
+</html>

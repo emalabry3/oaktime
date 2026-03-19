@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OakTime — Mes tâches</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <!--
+    Feuille de style principale de l'application.
+    Séparée du template pour faciliter la maintenance et la mise en cache navigateur.
+  -->
+  <link rel="stylesheet" th:href="@{/css/tache.css}"/>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="page-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <a th:href="@{/taches}" class="brand-link">
+        <span class="brand-icon">🌿</span>
+        <span class="brand-name">OakTime</span>
+      </a>
+    </div>
+    <nav class="header-nav">
+      <a th:href="@{/taches}" class="nav-link nav-link--active">Tâches</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main class="page-main">
+  <div class="page-wrapper">
+
+    <!-- Titre + bouton création -->
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title">Mes <em>tâches</em></h1>
+        <p class="page-subtitle" th:if="${recherche != null}">
+          Résultats pour : <strong th:text="${recherche}"></strong>
+        </p>
+      </div>
+      <a th:href="@{/taches/nouveau}" class="btn btn-primary">+ Nouvelle tâche</a>
+    </div>
+
+    <!-- Message de succès flash -->
+    <div class="alert alert-success" th:if="${messageSucces}" th:text="${messageSucces}"></div>
+
+    <!-- Barre de recherche -->
+    <div class="search-bar">
+      <form th:action="@{/taches}" method="get" class="search-form">
+        <input type="text"
+               name="recherche"
+               class="search-input"
+               placeholder="Rechercher une tâche…"
+               th:value="${recherche}"/>
+        <button type="submit" class="btn btn-ghost">Rechercher</button>
+        <a th:href="@{/taches}" class="btn btn-ghost" th:if="${recherche != null}">✕ Effacer</a>
+      </form>
+    </div>
+
+    <!-- Liste des tâches -->
+    <div class="tache-grid-wrap" th:if="${not #lists.isEmpty(taches)}">
+      <svg class="deps-svg" id="deps-svg-liste" aria-hidden="true"></svg>
+
+      <div th:each="tache : ${taches}"
+           class="tache-card sous-tache-panel"
+           th:data-nom="${#strings.toLowerCase(tache.nom)}"
+           th:data-debut="${tache.dateDebutStr}"
+           th:data-fin="${tache.dateFinStr}"
+           th:data-tache-id="${tache.id}"
+           th:data-predecesseurs="${#strings.listJoin(tache.predecesseurs.![id], ',')}">
+
+        <a th:href="@{/taches/{id}(id=${tache.id})}" class="tache-card-link">
+
+          <div class="tache-card__header">
+            <span class="tache-card__nom" th:text="${tache.nom}">Nom</span>
+            <span th:if="${tache.statutKanban != null and tache.statutKanban.name() == 'EN_COURS'}"
+                  class="badge badge-en-cours">En cours</span>
+            <span th:if="${tache.statutKanban != null and tache.statutKanban.name() == 'TERMINE'}"
+                  class="badge badge-termine">Terminé</span>
+          </div>
+
+          <p th:if="${tache.description != null and !tache.description.isEmpty()}"
+             class="tache-card__desc"
+             th:text="${#strings.abbreviate(tache.description, 100)}"></p>
+
+          <div class="tache-card__meta">
+            <span th:if="${tache.dateDebut != null}"
+                  class="meta-chip meta-chip--sage"
+                  th:text="'▶ ' + ${tache.dateDebutAffichage}"></span>
+            <span th:if="${tache.dateFin != null}"
+                  class="meta-chip meta-chip--lavender"
+                  th:text="'⏹ ' + ${tache.dateFinAffichage}"></span>
+          </div>
+
+          <div class="tache-card__footer">
+            <span class="sous-taches-count" th:if="${tache.nombreSousTaches > 0}"
+                  th:text="${tache.nombreSousTaches} + ' sous-tâche' + (${tache.nombreSousTaches} > 1 ? 's' : '')"></span>
+            <span class="sous-taches-count sous-taches-count--empty" th:if="${tache.nombreSousTaches == 0}">
+              Aucune sous-tâche
+            </span>
+            <span class="tache-card__arrow">→</span>
+          </div>
+
+        </a>
+      </div>
+    </div><!-- fin tache-grid-wrap -->
+
+    <!-- État vide -->
+    <div class="empty-state" th:if="${#lists.isEmpty(taches)}">
+      <span class="empty-state__icon">🌱</span>
+      <p th:if="${recherche != null}">Aucune tâche ne correspond à votre recherche.</p>
+      <p th:if="${recherche == null}">Vous n'avez pas encore de tâches.</p>
+      <a th:href="@{/taches/nouveau}" class="btn btn-primary" th:if="${recherche == null}">
+        Créer ma première tâche
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<!--
+  Script principal de l'application.
+  Séparé du template pour faciliter la maintenance et la mise en cache navigateur.
+-->
+<script th:src="@{/js/tache.js}"></script>
+</body>
+</html>

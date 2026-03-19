@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'OakTime — ' + ${tache.nom}">OakTime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/tache.css}"/>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="page-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <a th:href="@{/taches}" class="brand-link">
+        <span class="brand-icon">🌿</span>
+        <span class="brand-name">OakTime</span>
+      </a>
+    </div>
+    <nav class="header-nav">
+      <a th:href="@{/taches}" class="nav-link">Tâches</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== CONTENU PRINCIPAL ===== -->
+<main class="page-main">
+  <div class="page-wrapper page-wrapper--wide">
+
+    <!-- ===== FLASH MESSAGES ===== -->
+    <div th:if="${messageSucces}" class="alert alert-success" style="margin-bottom:20px;"
+         th:text="${messageSucces}"></div>
+    <div th:if="${messageErreur}" class="alert alert-error" style="margin-bottom:20px;"
+         th:text="${messageErreur}"></div>
+
+    <!-- ===== BREADCRUMB ===== -->
+    <nav class="breadcrumb" style="margin-bottom: 24px;">
+      <a th:href="@{/taches}">Tâches</a>
+      <th:block th:each="ancetre : ${ancetres}">
+        › <a th:href="@{/taches/{id}(id=${ancetre.id})}" th:text="${ancetre.nom}">Ancêtre</a>
+      </th:block>
+      › <strong th:text="${tache.nom}">Tâche</strong>
+    </nav>
+
+    <!-- ===== SECTION 1 : FORMULAIRE D'ÉDITION ===== -->
+    <div class="detail-compact">
+      <form th:action="@{/taches/{id}(id=${tache.id})}"
+            th:object="${tache}"
+            method="post">
+
+        <!-- ===== LIGNE HEADER : Nom + actions ===== -->
+        <div class="compact-header">
+
+          <span class="compact-type-badge"
+                th:text="${tache.parentId != null} ? 'Sous-tâche' : 'Tâche'"></span>
+
+          <div class="compact-nom-wrap" th:classappend="${#fields.hasErrors('nom')} ? 'field--error'">
+            <input type="text" id="nom" th:field="*{nom}"
+                   placeholder="Nom de la tâche"
+                   class="input compact-nom-input"
+                   th:classappend="${#fields.hasErrors('nom')} ? 'input--error'"/>
+            <span class="field-error" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></span>
+          </div>
+
+          <div class="compact-actions">
+            <button type="submit" class="btn btn-primary btn-sm">✓ Enregistrer</button>
+            <a th:href="${urlRetour}" class="btn btn-ghost btn-sm">Annuler</a>
+            <form th:action="@{/taches/{id}/supprimer(id=${tache.id})}"
+                  method="post"
+                  onsubmit="return confirm('Supprimer cette tâche et toutes ses sous-tâches ?')"
+                  style="margin:0">
+              <input type="hidden" name="parentId" th:value="${tache.parentId}"/>
+              <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- ===== LIGNE DATES + META ===== -->
+        <div class="compact-dates">
+
+          <div class="compact-field">
+            <label class="compact-label" for="dateDebut">Début
+              <span class="hint" th:if="${dateMin != null}"
+                    th:text="'≥ ' + ${#temporals.format(#temporals.createDate(dateMin), 'dd/MM/yy')}"></span>
+            </label>
+            <input type="date" id="dateDebut" th:field="*{dateDebut}"
+                   th:value="${tache.dateDebut != null} ? ${dateDebutStr} : ''"
+                   th:attr="min=${dateMin}, max=${dateMax}"
+                   class="input compact-date-input"/>
+          </div>
+
+          <div class="compact-field">
+            <label class="compact-label">Fin initiale</label>
+            <div class="compact-readonly"
+                 th:text="${tache.dateFin != null} ? ${dateFinStr} : '—'"></div>
+            <input type="hidden" th:field="*{dateFin}" th:value="${dateFinStr}"/>
+          </div>
+
+          <div class="compact-field">
+            <label class="compact-label" for="dateFin">Fin
+              <span class="hint" th:if="${dateMax != null}"
+                    th:text="'≤ ' + ${#temporals.format(#temporals.createDate(dateMax), 'dd/MM/yy')}"></span>
+            </label>
+            <input type="date" id="dateFin" th:field="*{dateFin}"
+                   th:value="${dateFinStr}"
+                   th:attr="min=${dateMin}, max=${dateMax}"
+                   class="input compact-date-input"/>
+          </div>
+
+          <div class="compact-field">
+            <label class="compact-label">Créé le</label>
+            <div class="compact-readonly" th:text="${dateCreationStr}"></div>
+          </div>
+
+          <div class="compact-field">
+            <label class="compact-label">ID</label>
+            <div class="compact-readonly" th:text="'#' + ${tache.id}"></div>
+          </div>
+
+        </div>
+
+        <!-- ===== LIGNE DESCRIPTION ===== -->
+        <div class="compact-desc" th:classappend="${#fields.hasErrors('description')} ? 'field--error'">
+          <textarea id="description" th:field="*{description}"
+                    placeholder="Description (optionnel)…"
+                    class="input compact-desc-input"
+                    rows="2"
+                    th:classappend="${#fields.hasErrors('description')} ? 'input--error'"></textarea>
+          <span class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+        </div>
+
+      </form>
+
+      <!-- ===== LIGNE PRÉDÉCESSEURS + SUCCESSEURS ===== -->
+      <div class="compact-deps">
+
+        <!-- Prédécesseurs -->
+        <div class="compact-deps__col">
+          <span class="compact-deps__label">Prédécesseurs</span>
+          <div class="compact-deps__chips">
+            <div th:each="pred : ${tache.predecesseurs}" class="dep-chip dep-chip--pred">
+              <a th:href="@{/taches/{id}(id=${pred.id})}" class="dep-chip__link" th:text="${pred.nom}">Nom</a>
+              <span class="dep-chip__date" th:if="${pred.dateFin != null}"
+                    th:text="'· ' + ${pred.dateFinAffichage}"></span>
+              <form th:action="@{/taches/{id}/predecesseurs/supprimer(id=${tache.id})}"
+                    method="post" style="margin:0; display:inline;">
+                <input type="hidden" name="predecesseurId" th:value="${pred.id}"/>
+                <button type="submit" class="dep-chip__del" title="Retirer">✕</button>
+              </form>
+            </div>
+            <!-- Ajout -->
+            <form th:if="${not #lists.isEmpty(soeursEligibles)}"
+                  th:action="@{/taches/{id}/predecesseurs/ajouter(id=${tache.id})}"
+                  method="post" class="dep-add-form">
+              <select name="predecesseurId" class="dep-select">
+                <option value="">+ Ajouter…</option>
+                <option th:each="soeur : ${soeursEligibles}"
+                        th:value="${soeur.id}"
+                        th:text="${soeur.nom} + (${soeur.dateFin != null} ? ' (' + ${soeur.dateFinAffichage} + ')' : '')">
+                </option>
+              </select>
+              <button type="submit" class="dep-add-btn">✓</button>
+            </form>
+            <span class="compact-deps__empty"
+                  th:if="${#lists.isEmpty(tache.predecesseurs) and #lists.isEmpty(soeursEligibles)}">—</span>
+          </div>
+        </div>
+
+        <!-- Séparateur -->
+        <div class="compact-deps__sep"></div>
+
+        <!-- Successeurs -->
+        <div class="compact-deps__col" th:if="${not #lists.isEmpty(tache.successeurs)}">
+          <span class="compact-deps__label">Successeurs</span>
+          <div class="compact-deps__chips">
+            <div th:each="succ : ${tache.successeurs}" class="dep-chip dep-chip--succ">
+              <a th:href="@{/taches/{id}(id=${succ.id})}" class="dep-chip__link" th:text="${succ.nom}">Nom</a>
+              <span class="dep-chip__date" th:if="${succ.dateFin != null}"
+                    th:text="'· ' + ${succ.dateFinAffichage}"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- fin detail-compact -->
+
+    <!-- ===== SECTION : SOUS-TÂCHES (onglets) ===== -->
+    <div class="detail-section" style="margin-top: 16px;">
+
+      <!-- En-tête avec onglets + bouton -->
+      <div class="detail-section__header">
+        <div class="tabs">
+          <button class="tab tab--active" id="tab-deps" onclick="switchTab('deps')">
+            Dépendances
+            <span class="badge-count" th:text="${#lists.size(sousTaches)}">0</span>
+          </button>
+          <button class="tab" id="tab-kanban" onclick="switchTab('kanban')">
+            Kanban
+            <span class="badge-count" th:text="${#lists.size(sousTaches)}">0</span>
+          </button>
+          <button class="tab" id="tab-tdb" onclick="switchTab('tdb')">
+            Tableau de bord
+          </button>
+          <button class="tab" id="tab-journal" onclick="switchTab('journal')">
+            Journal
+            <span class="badge-count" th:text="${traces != null} ? ${#lists.size(traces)} : 0">0</span>
+          </button>
+          <button class="tab" id="tab-dates" onclick="switchTab('dates')">
+            Dates
+          </button>
+        </div>
+        <a th:href="@{/taches/nouveau(parentId=${tache.id})}" class="btn btn-primary btn-sm">
+          + Nouvelle sous-tâche
+        </a>
+      </div>
+
+      <!-- ===== ONGLET DÉPENDANCES ===== -->
+      <div id="panel-deps">
+
+        <!-- Filtres -->
+        <div class="detail-filters" id="filtres">
+          <input type="text" id="filtre-nom" class="search-input"
+                 placeholder="🔍 Filtrer par nom…" oninput="filtrerSousTaches()"/>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <label class="hint" style="white-space:nowrap;">Du</label>
+            <input type="date" id="filtre-date-debut" class="search-input"
+                   style="width:auto;" oninput="filtrerSousTaches()"/>
+            <label class="hint" style="white-space:nowrap;">au</label>
+            <input type="date" id="filtre-date-fin" class="search-input"
+                   style="width:auto;" oninput="filtrerSousTaches()"/>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="reinitialiserFiltres()">✕ Réinitialiser</button>
+        </div>
+
+        <!-- Panels sous-tâches -->
+        <div class="tache-grid-scroll" th:if="${not #lists.isEmpty(sousTaches)}">
+        <div class="tache-grid-wrap">
+
+          <div th:each="st : ${sousTaches}"
+               class="tache-card sous-tache-panel"
+               th:data-nom="${#strings.toLowerCase(st.nom)}"
+               th:data-debut="${st.dateDebut != null ? st.dateDebut.toString() : ''}"
+               th:data-fin="${st.dateFin != null ? st.dateFin.toString() : ''}"
+               th:data-tache-id="${st.id}"
+               th:data-predecesseurs="${#strings.listJoin(st.predecesseurs.![id], ',')}"
+               >
+            <a th:href="@{/taches/{id}(id=${st.id})}" class="tache-card-link">
+              <div class="tache-card__header">
+                <span class="tache-card__nom" th:text="${st.nom}">Nom</span>
+                <span th:if="${st.statutKanban != null and st.statutKanban.name() == 'BACKLOG'}"
+                      class="badge badge-kanban badge-kanban--backlog">Backlog</span>
+                <span th:if="${st.statutKanban != null and st.statutKanban.name() == 'EN_COURS'}"
+                      class="badge badge-kanban badge-kanban--en-cours">En cours</span>
+                <span th:if="${st.statutKanban != null and st.statutKanban.name() == 'TERMINE'}"
+                      class="badge badge-kanban badge-kanban--termine">Terminé</span>
+              </div>
+              <div class="tache-card__meta">
+                <span th:if="${st.dateDebut != null}"
+                      class="meta-chip meta-chip--sage"
+                      th:text="'▶ ' + ${st.dateDebutAffichage}"></span>
+                <span th:if="${st.dateFin != null}"
+                      class="meta-chip meta-chip--lavender"
+                      th:text="'⏹ ' + ${st.dateFinAffichage}"></span>
+              </div>
+              <div class="tache-card__footer">
+                <span class="sous-taches-count" th:if="${st.nombreSousTaches > 0}"
+                      th:text="${st.nombreSousTaches} + ' sous-tâche' + (${st.nombreSousTaches} > 1 ? 's' : '')"></span>
+                <span class="sous-taches-count sous-taches-count--empty" th:if="${st.nombreSousTaches == 0}">Aucune sous-tâche</span>
+                <span class="tache-card__arrow">→</span>
+              </div>
+            </a>
+          </div>
+
+          <svg class="deps-svg" id="deps-svg-detail" aria-hidden="true"></svg>
+        </div>
+        </div>
+
+        <div class="empty-state empty-state--sm" th:if="${#lists.isEmpty(sousTaches)}">
+          <span class="empty-state__icon">📋</span>
+          Aucune sous-tâche pour l'instant.<br/>
+          <a th:href="@{/taches/nouveau(parentId=${tache.id})}" class="btn btn-primary" style="margin-top:16px;">
+            + Créer la première sous-tâche
+          </a>
+        </div>
+        <div class="empty-state empty-state--sm" id="filtre-vide" style="display:none;">
+          <span class="empty-state__icon">🔍</span>
+          Aucune sous-tâche ne correspond aux filtres.
+        </div>
+
+      </div><!-- fin panel-deps -->
+
+      <!-- ===== ONGLET KANBAN ===== -->
+      <div id="panel-kanban" style="display:none;">
+        <div class="kanban-board">
+
+          <!-- BACKLOG -->
+          <div class="kanban-col" data-statut="BACKLOG">
+            <div class="kanban-col__header kanban-col__header--backlog">
+              <span class="kanban-col__title">Backlog</span>
+              <span class="kanban-col__count">0</span>
+            </div>
+            <div class="kanban-col__body"
+                 ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event, 'BACKLOG')">
+              <div th:each="st : ${sousTaches}"
+                   th:if="${st.statutKanban != null and st.statutKanban.name() == 'BACKLOG'}"
+                   class="kanban-card"
+                   th:data-id="${st.id}"
+                   draggable="true"
+                   ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+                <div class="kanban-card__nom" th:text="${st.nom}">Nom</div>
+                <div class="kanban-card__meta">
+                  <span th:if="${st.dateDebutAffichage != null and !#strings.isEmpty(st.dateDebutAffichage)}"
+                        class="meta-chip meta-chip--sage" th:text="'▶ ' + ${st.dateDebutAffichage}"></span>
+                  <span th:if="${st.dateFinAffichage != null and !#strings.isEmpty(st.dateFinAffichage)}"
+                        class="meta-chip meta-chip--lavender" th:text="'⏹ ' + ${st.dateFinAffichage}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EN_COURS -->
+          <div class="kanban-col" data-statut="EN_COURS">
+            <div class="kanban-col__header kanban-col__header--en-cours">
+              <span class="kanban-col__title">En cours</span>
+              <span class="kanban-col__count">0</span>
+            </div>
+            <div class="kanban-col__body"
+                 ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event, 'EN_COURS')">
+              <div th:each="st : ${sousTaches}"
+                   th:if="${st.statutKanban != null and st.statutKanban.name() == 'EN_COURS'}"
+                   class="kanban-card"
+                   th:data-id="${st.id}"
+                   draggable="true"
+                   ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+                <div class="kanban-card__nom" th:text="${st.nom}">Nom</div>
+                <div class="kanban-card__meta">
+                  <span th:if="${st.dateDebutAffichage != null and !#strings.isEmpty(st.dateDebutAffichage)}"
+                        class="meta-chip meta-chip--sage" th:text="'▶ ' + ${st.dateDebutAffichage}"></span>
+                  <span th:if="${st.dateFinAffichage != null and !#strings.isEmpty(st.dateFinAffichage)}"
+                        class="meta-chip meta-chip--lavender" th:text="'⏹ ' + ${st.dateFinAffichage}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TERMINE -->
+          <div class="kanban-col" data-statut="TERMINE">
+            <div class="kanban-col__header kanban-col__header--termine">
+              <span class="kanban-col__title">Terminé</span>
+              <span class="kanban-col__count">0</span>
+            </div>
+            <div class="kanban-col__body"
+                 ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event, 'TERMINE')">
+              <div th:each="st : ${sousTaches}"
+                   th:if="${st.statutKanban != null and st.statutKanban.name() == 'TERMINE'}"
+                   class="kanban-card"
+                   th:data-id="${st.id}"
+                   draggable="true"
+                   ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+                <div class="kanban-card__nom" th:text="${st.nom}">Nom</div>
+                <div class="kanban-card__meta">
+                  <span th:if="${st.dateDebutAffichage != null and !#strings.isEmpty(st.dateDebutAffichage)}"
+                        class="meta-chip meta-chip--sage" th:text="'▶ ' + ${st.dateDebutAffichage}"></span>
+                  <span th:if="${st.dateFinAffichage != null and !#strings.isEmpty(st.dateFinAffichage)}"
+                        class="meta-chip meta-chip--lavender" th:text="'⏹ ' + ${st.dateFinAffichage}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- fin kanban-board -->
+      </div><!-- fin panel-kanban -->
+
+      <!-- ===== ONGLET TABLEAU DE BORD ===== -->
+      <div id="panel-tdb" style="display:none;">
+
+        <!-- Bloc 1 : Vue d'ensemble -->
+        <div class="tdb-bloc">
+          <h3 class="tdb-bloc__titre">Vue d'ensemble</h3>
+          <div class="tdb-compteurs">
+            <div class="tdb-compteur tdb-compteur--backlog">
+              <span class="tdb-compteur__valeur" th:text="${tdb.totalBacklog}">0</span>
+              <span class="tdb-compteur__label">Backlog</span>
+            </div>
+            <div class="tdb-compteur tdb-compteur--en-cours">
+              <span class="tdb-compteur__valeur" th:text="${tdb.totalEnCours}">0</span>
+              <span class="tdb-compteur__label">En cours</span>
+            </div>
+            <div class="tdb-compteur tdb-compteur--termine">
+              <span class="tdb-compteur__valeur" th:text="${tdb.totalTermine}">0</span>
+              <span class="tdb-compteur__label">Terminé</span>
+            </div>
+            <div class="tdb-compteur tdb-compteur--total">
+              <span class="tdb-compteur__valeur" th:text="${tdb.totalDescendants}">0</span>
+              <span class="tdb-compteur__label">Total</span>
+            </div>
+          </div>
+          <div class="tdb-progress">
+            <div class="tdb-progress__bar"
+                 th:style="'width:' + ${tdb.pourcentageTermine} + '%'"></div>
+          </div>
+          <div class="tdb-progress__label"
+               th:text="${tdb.pourcentageTermine} + '% terminé'">0% terminé</div>
+        </div>
+
+        <!-- Bloc 2 : Tâches en retard de démarrage -->
+        <div class="tdb-bloc">
+          <h3 class="tdb-bloc__titre">
+            ⚠️ En retard de démarrage
+            <span class="badge-count" th:text="${#lists.size(tdb.tachesEnRetardDemarrage)}">0</span>
+          </h3>
+          <div th:if="${#lists.isEmpty(tdb.tachesEnRetardDemarrage)}" class="tdb-vide">
+            Aucune tâche en retard de démarrage.
+          </div>
+          <table class="tdb-table" th:if="${not #lists.isEmpty(tdb.tachesEnRetardDemarrage)}">
+            <thead><tr><th>Tâche</th><th>Devait démarrer le</th><th>Statut</th></tr></thead>
+            <tbody>
+              <tr th:each="t : ${tdb.tachesEnRetardDemarrage}">
+                <td><a th:href="@{/taches/{id}(id=${t.id})}" th:text="${t.nom}" class="tdb-link">Nom</a></td>
+                <td class="tdb-date tdb-date--alerte" th:text="${t.dateDebutAffichage}">—</td>
+                <td><span class="badge badge-kanban badge-kanban--backlog">Backlog</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Bloc 3 : Échéances proches -->
+        <div class="tdb-bloc">
+          <h3 class="tdb-bloc__titre">
+            🕐 Échéances dans les 7 jours
+            <span class="badge-count" th:text="${#lists.size(tdb.tachesEcheanceProche)}">0</span>
+          </h3>
+          <div th:if="${#lists.isEmpty(tdb.tachesEcheanceProche)}" class="tdb-vide">
+            Aucune échéance imminente.
+          </div>
+          <table class="tdb-table" th:if="${not #lists.isEmpty(tdb.tachesEcheanceProche)}">
+            <thead><tr><th>Tâche</th><th>Échéance</th><th>Statut</th></tr></thead>
+            <tbody>
+              <tr th:each="t : ${tdb.tachesEcheanceProche}">
+                <td><a th:href="@{/taches/{id}(id=${t.id})}" th:text="${t.nom}" class="tdb-link">Nom</a></td>
+                <td th:text="${t.dateFinAffichage}"
+                    th:class="${t.dateFinStr != null and #strings.toString(t.dateFinStr) lt #strings.toString(#dates.format(#dates.createNow(), 'yyyy-MM-dd'))} ? 'tdb-date tdb-date--alerte' : 'tdb-date'">—</td>
+                <td><span class="badge badge-kanban badge-kanban--en-cours">En cours</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Bloc 4 : Tâches bloquées -->
+        <div class="tdb-bloc">
+          <h3 class="tdb-bloc__titre">
+            🔒 Tâches bloquées
+            <span class="badge-count" th:text="${#lists.size(tdb.tachesBloquees)}">0</span>
+          </h3>
+          <div th:if="${#lists.isEmpty(tdb.tachesBloquees)}" class="tdb-vide">
+            Aucune tâche bloquée par ses prédécesseurs.
+          </div>
+          <table class="tdb-table" th:if="${not #lists.isEmpty(tdb.tachesBloquees)}">
+            <thead><tr><th>Tâche</th><th>Statut</th></tr></thead>
+            <tbody>
+              <tr th:each="t : ${tdb.tachesBloquees}">
+                <td><a th:href="@{/taches/{id}(id=${t.id})}" th:text="${t.nom}" class="tdb-link">Nom</a></td>
+                <td>
+                  <span th:if="${t.statutKanban != null and t.statutKanban.name() == 'BACKLOG'}"
+                        class="badge badge-kanban badge-kanban--backlog">Backlog</span>
+                  <span th:if="${t.statutKanban != null and t.statutKanban.name() == 'EN_COURS'}"
+                        class="badge badge-kanban badge-kanban--en-cours">En cours</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Bloc 5 : Activité récente -->
+        <div class="tdb-bloc">
+          <h3 class="tdb-bloc__titre">🕓 Activité récente</h3>
+          <div th:if="${#lists.isEmpty(tdb.activiteRecente)}" class="tdb-vide">
+            Aucune sous-tâche créée.
+          </div>
+          <table class="tdb-table" th:if="${not #lists.isEmpty(tdb.activiteRecente)}">
+            <thead><tr><th>Tâche</th><th>Créée le</th><th>Statut</th></tr></thead>
+            <tbody>
+              <tr th:each="t : ${tdb.activiteRecente}">
+                <td><a th:href="@{/taches/{id}(id=${t.id})}" th:text="${t.nom}" class="tdb-link">Nom</a></td>
+                <td class="tdb-date"
+                    th:text="${t.dateCreation != null} ? ${#temporals.format(t.dateCreation, 'dd/MM/yy HH:mm')} : '—'">—</td>
+                <td>
+                  <span th:if="${t.statutKanban != null and t.statutKanban.name() == 'BACKLOG'}"
+                        class="badge badge-kanban badge-kanban--backlog">Backlog</span>
+                  <span th:if="${t.statutKanban != null and t.statutKanban.name() == 'EN_COURS'}"
+                        class="badge badge-kanban badge-kanban--en-cours">En cours</span>
+                  <span th:if="${t.statutKanban != null and t.statutKanban.name() == 'TERMINE'}"
+                        class="badge badge-kanban badge-kanban--termine">Terminé</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div><!-- fin panel-tdb -->
+
+      <!-- ===== ONGLET DATES ===== -->
+      <div id="panel-dates" style="display:none;">
+
+        <!-- Légende -->
+        <div class="frise-legende">
+          <span class="frise-legende-item">
+            <span class="frise-legende-dot frise-legende-dot--initiale"></span>
+            Fin initiale (date planifiée)
+          </span>
+          <span class="frise-legende-item">
+            <span class="frise-legende-dot frise-legende-dot--corrigee"></span>
+            Fin corrigée (date révisée)
+          </span>
+          <span class="frise-legende-item">
+            <span class="frise-alerte-icon">🔴</span>
+            Date de fin dépassée
+          </span>
+        </div>
+
+        <!-- Zone frise avec SVG overlay pour les flèches -->
+        <div class="frise-zone" id="frise-zone">
+          <svg class="frise-svg" id="frise-svg" aria-hidden="true"></svg>
+
+        <div class="frise-container">
+
+          <!-- En-tête colonnes -->
+          <div class="frise-row frise-row--header">
+            <div class="frise-nom"></div>
+            <div class="frise-barre-wrap"></div>
+            <div class="frise-dates">
+              <span class="frise-col-label">Début</span>
+              <span class="frise-col-label">Fin</span>
+            </div>
+            <div class="frise-alerte-col"></div>
+          </div>
+
+          <!-- Ligne tâche courante -->
+          <div class="frise-row frise-row--parent">
+            <div class="frise-nom" th:text="${tache.nom}">Nom</div>
+            <div class="frise-barre-wrap">
+              <canvas class="frise-canvas"
+                      th:data-id="${tache.id}"
+                      th:data-debut="${tache.dateDebut != null ? tache.dateDebut : ''}"
+                      th:data-fin="${tache.dateFin != null ? tache.dateFin : ''}"
+                      
+                      data-predecesseurs="">
+              </canvas>
+            </div>
+            <div class="frise-dates">
+              <span class="frise-date-chip frise-date-chip--debut frise-date-chip--readonly"
+                    th:text="${tache.dateDebut != null ? #temporals.format(tache.dateDebut,'dd/MM/yy') : '—'}">—</span>
+              <input type="date" class="frise-input-fin"
+                     th:data-id="${tache.id}"
+                     
+                     th:value="${tache.dateFin != null ? tache.dateFin : ''}"
+                     onchange="sauvegarderDateFin(this)"/>
+            </div>
+            <div class="frise-alerte-col">
+              <span class="frise-alerte-icon"
+                    th:if="${tache.dateFin != null and tache.dateFin.isBefore(#temporals.createToday())}"
+                    title="Date de fin dépassée">🔴</span>
+            </div>
+          </div>
+
+          <div class="frise-sep"></div>
+
+          <!-- Lignes sous-tâches -->
+          <div th:if="${#lists.isEmpty(sousTaches)}" class="tdb-vide" style="padding:16px 0;">
+            Aucune sous-tâche.
+          </div>
+
+          <div th:each="st : ${sousTaches}" class="frise-row">
+            <div class="frise-nom">
+              <a th:href="@{/taches/{id}(id=${st.id})}" class="tdb-link" th:text="${st.nom}">Nom</a>
+            </div>
+            <div class="frise-barre-wrap">
+              <canvas class="frise-canvas"
+                      th:data-id="${st.id}"
+                      th:data-debut="${st.dateDebut != null ? st.dateDebut : ''}"
+                      th:data-fin="${st.dateFin != null ? st.dateFin : ''}"
+                      
+                      th:data-predecesseurs="${not #lists.isEmpty(st.predecesseurs)} ? ${#strings.listJoin(st.predecesseurs.![id.toString()], ',')} : ''">
+              </canvas>
+            </div>
+            <div class="frise-dates">
+              <span class="frise-date-chip frise-date-chip--debut frise-date-chip--readonly"
+                    th:text="${st.dateDebut != null ? #temporals.format(st.dateDebut,'dd/MM/yy') : '—'}">—</span>
+              <input type="date" class="frise-input-fin"
+                     th:data-id="${st.id}"
+                     
+                     th:value="${st.dateFin != null ? st.dateFin : ''}"
+                     onchange="sauvegarderDateFin(this)"/>
+            </div>
+            <div class="frise-alerte-col">
+              <span class="frise-alerte-icon"
+                    th:if="${st.dateFin != null and st.dateFin.isBefore(#temporals.createToday())}"
+                    title="Date de fin dépassée">🔴</span>
+            </div>
+          </div>
+
+        </div><!-- fin frise-container -->
+        </div><!-- fin frise-zone -->
+
+      </div><!-- fin panel-dates -->
+
+      <!-- ===== ONGLET JOURNAL ===== -->
+      <div id="panel-journal" style="display:none;">
+
+        <!-- Formulaire de saisie manuelle -->
+        <form th:action="@{/taches/{id}/traces(id=${tache.id})}" method="post" class="journal-form">
+          <input type="text" name="message" class="journal-input"
+                 placeholder="Ajouter une note…" maxlength="2000" required/>
+          <button type="submit" class="btn btn-primary btn-sm">Ajouter</button>
+        </form>
+
+        <!-- Liste des traces -->
+        <div class="journal-liste" th:if="${traces != null and not #lists.isEmpty(traces)}">
+          <div th:each="trace : ${traces}" class="journal-entree"
+               th:classappend="${trace.typeTrace.name() == 'MANUEL'} ? 'journal-entree--manuelle' : ''">
+
+            <div class="journal-entree__meta">
+              <!-- Icône selon le type -->
+              <span class="journal-type-icon"
+                    th:text="${trace.typeTrace.name() == 'CREATION'} ? '✨'
+                           : (${trace.typeTrace.name() == 'MODIFICATION'} ? '✏️'
+                           : (${trace.typeTrace.name() == 'STATUT'} ? '🔄'
+                           : (${trace.typeTrace.name() == 'PREDECESSEUR'} ? '🔗'
+                           : (${trace.typeTrace.name() == 'SOUS_TACHE'} ? '📂'
+                           : '💬'))))">💬</span>
+              <span class="journal-date" th:text="${trace.dateHeureAffichage}">—</span>
+              <!-- Badge "remonté" si trace issue d'une sous-tâche -->
+              <span th:if="${trace.tacheOrigineId != null}" class="journal-badge-remonte"
+                    th:text="'↑ ' + ${trace.tacheOrigineNom}">↑ origine</span>
+            </div>
+
+            <div class="journal-entree__corps">
+              <span class="journal-message" th:text="${trace.message}">Message</span>
+              <!-- Bouton supprimer uniquement sur les traces manuelles natives -->
+              <form th:if="${trace.typeTrace.name() == 'MANUEL' and trace.tacheOrigineId == null}"
+                    th:action="@{/taches/traces/{tid}/supprimer(tid=${trace.id})}"
+                    method="post" style="display:inline; margin:0;">
+                <input type="hidden" name="tacheId" th:value="${tache.id}"/>
+                <button type="submit" class="journal-del-btn" title="Supprimer cette note"
+                        onclick="return confirm('Supprimer cette note ?')">✕</button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="tdb-vide" th:if="${traces == null or #lists.isEmpty(traces)}"
+             style="padding: 20px 0;">
+          Aucune trace pour l'instant.
+        </div>
+
+      </div><!-- fin panel-journal -->
+
+    </div><!-- fin detail-section sous-tâches -->
+
+  </div>
+</main>
+
+<script th:src="@{/js/tache.js}"></script>
+</body>
+</html>
