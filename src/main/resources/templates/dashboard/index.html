@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OakTime — Tableau de bord</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/tache.css}"/>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}"/>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="page-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <a th:href="@{/}" class="brand-link">
+        <span class="brand-icon">🌿</span>
+        <span class="brand-name">OakTime</span>
+      </a>
+    </div>
+    <nav class="header-nav">
+      <a th:href="@{/}"      class="nav-link nav-link--active">Tableau de bord</a>
+      <a th:href="@{/taches}" class="nav-link">Tâches</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-main">
+  <div class="page-wrapper">
+
+    <!-- Titre -->
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title">Tableau de <em>bord</em></h1>
+        <p class="page-subtitle">Vue d'ensemble de toutes vos tâches</p>
+      </div>
+      <a th:href="@{/taches/nouveau}" class="btn btn-primary">+ Nouvelle tâche</a>
+    </div>
+
+    <!-- ===== BLOC 1 : Compteurs globaux ===== -->
+    <div class="tdb-counters">
+
+      <div class="tdb-counter tdb-counter--total">
+        <span class="tdb-counter__value" th:text="${tdb.totalTaches}">0</span>
+        <span class="tdb-counter__label">Total</span>
+      </div>
+
+      <div class="tdb-counter tdb-counter--backlog">
+        <span class="tdb-counter__value" th:text="${tdb.totalBacklog}">0</span>
+        <span class="tdb-counter__label">Backlog</span>
+      </div>
+
+      <div class="tdb-counter tdb-counter--en-cours">
+        <span class="tdb-counter__value" th:text="${tdb.totalEnCours}">0</span>
+        <span class="tdb-counter__label">En cours</span>
+      </div>
+
+      <div class="tdb-counter tdb-counter--termine">
+        <span class="tdb-counter__value" th:text="${tdb.totalTermine}">0</span>
+        <span class="tdb-counter__label">Terminées</span>
+      </div>
+
+      <div class="tdb-counter tdb-counter--pct">
+        <div class="tdb-progress-ring">
+          <svg viewBox="0 0 60 60">
+            <circle cx="30" cy="30" r="24" class="tdb-ring-bg"/>
+            <circle cx="30" cy="30" r="24" class="tdb-ring-fill"
+                    th:style="'stroke-dashoffset: ' + ${151 - (tdb.pourcentageTermine * 151 / 100)}"/>
+          </svg>
+          <span class="tdb-ring-label" th:text="${tdb.pourcentageTermine} + '%'">0%</span>
+        </div>
+        <span class="tdb-counter__label">Avancement</span>
+      </div>
+
+    </div>
+
+    <!-- ===== BLOC 2 : Tâches urgentes ===== -->
+    <div class="tdb-urgences">
+
+      <!-- Retard démarrage -->
+      <div class="tdb-urgence-panel" th:classappend="${#lists.isEmpty(tdb.tachesEnRetardDemarrage)} ? 'tdb-urgence-panel--vide'">
+        <div class="tdb-urgence-panel__header tdb-urgence-panel__header--retard">
+          <span class="tdb-urgence-panel__icon">⏰</span>
+          <span class="tdb-urgence-panel__titre">Retard de démarrage</span>
+          <span class="tdb-urgence-panel__count" th:text="${#lists.size(tdb.tachesEnRetardDemarrage)}">0</span>
+        </div>
+        <div class="tdb-urgence-panel__body">
+          <div th:if="${#lists.isEmpty(tdb.tachesEnRetardDemarrage)}" class="tdb-urgence-empty">Aucune tâche en retard 🎉</div>
+          <a th:each="t : ${tdb.tachesEnRetardDemarrage}"
+             th:href="@{/taches/{id}(id=${t.id})}"
+             class="tdb-urgence-item">
+            <span class="tdb-urgence-item__chemin" th:text="${t.chemin}"></span>
+            <span class="tdb-urgence-item__date tdb-urgence-item__date--retard"
+                  th:text="'▶ ' + ${t.dateDebutStr}"></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Échéance proche -->
+      <div class="tdb-urgence-panel" th:classappend="${#lists.isEmpty(tdb.tachesEcheanceProche)} ? 'tdb-urgence-panel--vide'">
+        <div class="tdb-urgence-panel__header tdb-urgence-panel__header--echeance">
+          <span class="tdb-urgence-panel__icon">📅</span>
+          <span class="tdb-urgence-panel__titre">Échéance proche</span>
+          <span class="tdb-urgence-panel__count" th:text="${#lists.size(tdb.tachesEcheanceProche)}">0</span>
+        </div>
+        <div class="tdb-urgence-panel__body">
+          <div th:if="${#lists.isEmpty(tdb.tachesEcheanceProche)}" class="tdb-urgence-empty">Aucune échéance imminente 🎉</div>
+          <a th:each="t : ${tdb.tachesEcheanceProche}"
+             th:href="@{/taches/{id}(id=${t.id})}"
+             class="tdb-urgence-item">
+            <span class="tdb-urgence-item__chemin" th:text="${t.chemin}"></span>
+            <span class="tdb-urgence-item__date tdb-urgence-item__date--echeance"
+                  th:text="'⏹ ' + ${t.dateFinStr}"></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Bloquées -->
+      <div class="tdb-urgence-panel" th:classappend="${#lists.isEmpty(tdb.tachesBloquees)} ? 'tdb-urgence-panel--vide'">
+        <div class="tdb-urgence-panel__header tdb-urgence-panel__header--bloquee">
+          <span class="tdb-urgence-panel__icon">🔒</span>
+          <span class="tdb-urgence-panel__titre">Bloquées</span>
+          <span class="tdb-urgence-panel__count" th:text="${#lists.size(tdb.tachesBloquees)}">0</span>
+        </div>
+        <div class="tdb-urgence-panel__body">
+          <div th:if="${#lists.isEmpty(tdb.tachesBloquees)}" class="tdb-urgence-empty">Aucune tâche bloquée 🎉</div>
+          <a th:each="t : ${tdb.tachesBloquees}"
+             th:href="@{/taches/{id}(id=${t.id})}"
+             class="tdb-urgence-item">
+            <span class="tdb-urgence-item__chemin" th:text="${t.chemin}"></span>
+            <span class="tdb-urgence-item__badge">en attente</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== BLOC 3 : Avancement par projet ===== -->
+    <div class="tdb-projets" th:if="${not #lists.isEmpty(tdb.statsParRacine)}">
+      <h2 class="tdb-section-title">Avancement par projet</h2>
+      <div class="tdb-projet-list">
+        <a th:each="stat : ${tdb.statsParRacine}"
+           th:href="@{/taches/{id}(id=${stat.id})}"
+           class="tdb-projet-row">
+
+          <span class="tdb-projet-row__nom" th:text="${stat.nom}">Projet</span>
+
+          <span class="tdb-projet-row__chips">
+            <span class="tdb-chip tdb-chip--backlog"  th:text="${stat.backlog}  + ' backlog'"></span>
+            <span class="tdb-chip tdb-chip--en-cours" th:text="${stat.enCours} + ' en cours'"></span>
+            <span class="tdb-chip tdb-chip--termine"  th:text="${stat.termine} + ' terminée' + (${stat.termine} > 1 ? 's' : '')"></span>
+          </span>
+
+          <div class="tdb-projet-row__bar-wrap">
+            <div class="tdb-projet-row__bar">
+              <div class="tdb-projet-row__bar-fill"
+                   th:style="'width: ' + ${stat.pourcentageTermine} + '%'"></div>
+            </div>
+            <span class="tdb-projet-row__pct" th:text="${stat.pourcentageTermine} + '%'">0%</span>
+          </div>
+
+        </a>
+      </div>
+    </div>
+
+    <!-- État vide global -->
+    <div class="empty-state" th:if="${tdb.totalTaches == 0}">
+      <span class="empty-state__icon">🌱</span>
+      <p>Aucune tâche pour le moment.</p>
+      <a th:href="@{/taches/nouveau}" class="btn btn-primary">Créer ma première tâche</a>
+    </div>
+
+  </div>
+</main>
+
+<script th:src="@{/js/tache.js}"></script>
+</body>
+</html>
