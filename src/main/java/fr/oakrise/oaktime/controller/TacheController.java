@@ -1,5 +1,7 @@
 package fr.oakrise.oaktime.controller;
 
+import fr.oakrise.oaktime.dto.DateUpdateResponseDTO;
+import fr.oakrise.oaktime.dto.StatutChangeResponseDTO;
 import fr.oakrise.oaktime.dto.TacheDTO;
 import fr.oakrise.oaktime.service.TacheService;
 import fr.oakrise.oaktime.service.TraceService;
@@ -8,6 +10,8 @@ import fr.oakrise.oaktime.dto.TraceTacheDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -154,9 +158,7 @@ public class TacheController {
         model.addAttribute("tache", tache);
         model.addAttribute("sousTaches", sousTaches);
         model.addAttribute("ancetres", construireAncetres(id));
-        // Enrichir les prédécesseurs pour l'affichage des dates
         enrichirPourAffichage(tache.getPredecesseurs());
-        // Enrichir les successeurs pour l'affichage des dates
         enrichirPourAffichage(tache.getSuccesseurs());
         ajouterDatesFormatees(tache, model);
 
@@ -176,7 +178,6 @@ public class TacheController {
         enrichirPourAffichage(soeursEligibles);
         model.addAttribute("soeursEligibles", soeursEligibles);
 
-        // Tableau de bord
         fr.oakrise.oaktime.dto.TableauDeBordDTO tdb = tacheService.calculerTableauDeBord(id);
         enrichirPourAffichage(tdb.getTachesEnRetardDemarrage());
         enrichirPourAffichage(tdb.getTachesEcheanceProche());
@@ -184,8 +185,7 @@ public class TacheController {
         enrichirPourAffichage(tdb.getActiviteRecente());
         model.addAttribute("tdb", tdb);
 
-        // Journal de traçage
-        java.util.List<TraceTacheDTO> traces;
+        List<TraceTacheDTO> traces;
         try {
             traces = traceService.listerParTache(id);
         } catch (Exception e) {
@@ -324,7 +324,6 @@ public class TacheController {
         return "redirect:/taches/" + tacheId + "#tab-journal";
     }
 
-
     // =========================================================================
     // DATES — mise à jour inline (onglet Dates) — R1, R6, R7, R8
     // =========================================================================
@@ -333,12 +332,13 @@ public class TacheController {
      * Met à jour dateDebut ou dateFin d'une tâche via AJAX.
      * R7 : EN_COURS → dateDebut non modifiable.
      * R8 : TERMINE  → dateDebut et dateFin non modifiables.
-     * R6 : si la nouvelle dateFin viole R5 chez des successeurs, renvoie la liste
-     *      des impactés ; le client confirme puis appelle /dates/decaler si accord.
+     * R6 : si la nouvelle dateFin viole R5 chez des successeurs, renvoie 409
+     *      avec un {@link DateUpdateResponseDTO} listant les tâches impactées ;
+     *      le client confirme puis appelle /dates/decaler si accord.
      */
     @PostMapping("/{id}/dates")
     @ResponseBody
-    public org.springframework.http.ResponseEntity<String> mettreAJourDate(
+    public ResponseEntity<DateUpdateResponseDTO> mettreAJourDate(
             @PathVariable("id") Long id,
             @RequestParam("champ") String champ,
             @RequestParam("valeur") String valeur) {
@@ -352,38 +352,38 @@ public class TacheController {
             } else if ("dateFin".equals(champ)) {
                 tache.setDateFin(date);
             } else {
-                return org.springframework.http.ResponseEntity.badRequest()
-                    .body("Champ inconnu : " + champ);
+                return ResponseEntity.badRequest()
+                    .body(DateUpdateResponseDTO.erreur("Champ inconnu : " + champ));
             }
 
-            // R1 vérification préalable avant d'appeler modifier()
+            // R1 vérification préalable
             if ("dateFin".equals(champ) && tache.getDateDebut() != null && date != null
                     && date.isBefore(tache.getDateDebut())) {
-                return org.springframework.http.ResponseEntity.badRequest()
-                    .body("R1 — La date de fin ne peut pas être antérieure à la date de début.");
+                return ResponseEntity.badRequest()
+                    .body(DateUpdateResponseDTO.erreur(
+                        "R1 — La date de fin ne peut pas être antérieure à la date de début."));
             }
 
             // R6 : détecter les successeurs impactés avant de sauvegarder
             if ("dateFin".equals(champ) && date != null) {
                 java.util.List<String> impactes = tacheService.verifierImpactSuccesseurs(id, date);
                 if (!impactes.isEmpty()) {
-                    // Retourner 409 avec la liste pour que le JS demande confirmation
-                    String noms = String.join(", ", impactes);
-                    String bodyR6 = "{\"r6\":true,\"impactes\":\"" + noms + "}";
-                    return org.springframework.http.ResponseEntity
-                        .status(org.springframework.http.HttpStatus.CONFLICT)
-                        .body(bodyR6);
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(DateUpdateResponseDTO.conflitR6(impactes));
                 }
             }
 
             tacheService.modifier(id, tache);
             traceService.tracer(id, tache.getNom(), TypeTrace.MODIFICATION,
                 "Date \"" + champ + "\" mise à jour → " + (date != null ? date : "—"));
-            return org.springframework.http.ResponseEntity.ok("OK");
+            return ResponseEntity.ok(DateUpdateResponseDTO.ok());
+
         } catch (fr.oakrise.oaktime.exception.TacheValidationException e) {
-            return org.springframework.http.ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest()
+                .body(DateUpdateResponseDTO.erreur(e.getMessage()));
         } catch (Exception e) {
-            return org.springframework.http.ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest()
+                .body(DateUpdateResponseDTO.erreur(e.getMessage()));
         }
     }
 
@@ -392,7 +392,7 @@ public class TacheController {
      */
     @PostMapping("/{id}/dates/decaler")
     @ResponseBody
-    public org.springframework.http.ResponseEntity<String> decalerSuccesseurs(
+    public ResponseEntity<DateUpdateResponseDTO> decalerSuccesseurs(
             @PathVariable("id") Long id,
             @RequestParam("valeur") String valeur) {
         try {
@@ -401,9 +401,10 @@ public class TacheController {
             tache.setDateFin(date);
             tacheService.modifier(id, tache);
             tacheService.decalerSuccesseurs(id);
-            return org.springframework.http.ResponseEntity.ok("OK");
+            return ResponseEntity.ok(DateUpdateResponseDTO.ok());
         } catch (Exception e) {
-            return org.springframework.http.ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest()
+                .body(DateUpdateResponseDTO.erreur(e.getMessage()));
         }
     }
 
@@ -413,11 +414,12 @@ public class TacheController {
 
     /**
      * Met à jour le statut Kanban d'une tâche via un appel AJAX (drag & drop).
-     * Retourne 200 OK si succès, 400 si statut invalide, 404 si tâche introuvable.
+     * Retourne 200 OK avec {@link StatutChangeResponseDTO} si succès,
+     * 409 si règle métier violée (R5), 400 si statut invalide.
      */
     @PostMapping("/{id}/statut")
     @ResponseBody
-    public org.springframework.http.ResponseEntity<String> changerStatut(
+    public ResponseEntity<StatutChangeResponseDTO> changerStatut(
             @PathVariable("id") Long id,
             @RequestParam("statut") String statut) {
 
@@ -425,20 +427,14 @@ public class TacheController {
             fr.oakrise.oaktime.entity.StatutKanban sk =
                 fr.oakrise.oaktime.entity.StatutKanban.valueOf(statut.toUpperCase());
             java.util.List<String> autoTermines = tacheService.changerStatut(id, sk);
-            StringBuilder json = new StringBuilder("{\"autoTermines\":[");
-            for (int i = 0; i < autoTermines.size(); i++) {
-                if (i > 0) json.append(",");
-                json.append("\"").append(autoTermines.get(i).replace("\"", "\\\"")).append("\"");
-            }
-            json.append("]}");
-            return org.springframework.http.ResponseEntity.ok(json.toString());
+            return ResponseEntity.ok(StatutChangeResponseDTO.succes(autoTermines));
+
         } catch (fr.oakrise.oaktime.exception.TacheValidationException e) {
-            return org.springframework.http.ResponseEntity
-                .status(org.springframework.http.HttpStatus.CONFLICT)
-                .body("{\"erreur\":\"" + e.getMessage().replace("\"", "\\\"") + "\"}");
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(StatutChangeResponseDTO.erreur(e.getMessage()));
         } catch (IllegalArgumentException e) {
-            return org.springframework.http.ResponseEntity.badRequest()
-                .body("{\"erreur\":\"Statut invalide : " + statut + "\"}");
+            return ResponseEntity.badRequest()
+                .body(StatutChangeResponseDTO.erreur("Statut invalide : " + statut));
         }
     }
 
@@ -446,9 +442,6 @@ public class TacheController {
     // UTILITAIRES
     // =========================================================================
 
-    /**
-     * Calcule les champs d'affichage (dates formatées) pour une liste de DTOs.
-     */
     private void enrichirPourAffichage(List<TacheDTO> taches) {
         java.time.format.DateTimeFormatter iso       = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
         java.time.format.DateTimeFormatter affichage = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yy");
@@ -464,10 +457,6 @@ public class TacheController {
         }
     }
 
-    /**
-     * Pré-formate toutes les dates d'une tâche côté Java pour éviter
-     * les appels #temporals dans Thymeleaf.
-     */
     private void ajouterDatesFormatees(TacheDTO tache, Model model) {
         java.time.format.DateTimeFormatter affichage = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
         java.time.format.DateTimeFormatter iso       = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -484,16 +473,10 @@ public class TacheController {
                         : "—");
     }
 
-    /**
-     * Trie une liste de tâches par ordre topologique (prédécesseurs avant successeurs).
-     * Les tâches sans lien conservent leur ordre relatif.
-     * Algorithme : Kahn (BFS) sur le graphe des dépendances restreint à la liste fournie.
-     */
     private List<TacheDTO> trierTopologique(List<TacheDTO> taches) {
         java.util.Map<Long, TacheDTO> parId = new java.util.LinkedHashMap<>();
         for (TacheDTO t : taches) parId.put(t.getId(), t);
 
-        // Degrés entrants (dans le sous-graphe de la liste)
         java.util.Map<Long, Integer> degre = new java.util.LinkedHashMap<>();
         java.util.Map<Long, java.util.List<Long>> successeursMap = new java.util.LinkedHashMap<>();
         for (TacheDTO t : taches) {
@@ -524,7 +507,6 @@ public class TacheController {
                 if (nvDegre == 0) file.add(succId);
             }
         }
-        // Ajouter les éventuels nœuds non atteints (cycle résiduel, ne devrait pas arriver)
         if (tries.size() < taches.size()) {
             for (TacheDTO t : taches) {
                 if (!tries.contains(t)) tries.add(t);
@@ -533,10 +515,6 @@ public class TacheController {
         return tries;
     }
 
-    /**
-     * Construit la liste des ancêtres (sans la tâche elle-même), du plus ancien au plus récent.
-     * Utilisé pour le breadcrumb : Tâches › A › B › C (tâche courante)
-     */
     private List<TacheDTO> construireAncetres(Long id) {
         List<TacheDTO> ancetres = new ArrayList<>();
         Long courantId = id;
