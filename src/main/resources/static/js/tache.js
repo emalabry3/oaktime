@@ -120,7 +120,6 @@ function initMSProject() {
   if (axisEl) {
     axisEl.innerHTML = '';
     var nbJours = plageTotale / 86400000;
-    // Niveau jour si <= 60 jours, semaine si <= 180 jours, sinon mois
     var parJour    = nbJours <= 60;
     var parSemaine = !parJour && nbJours <= 180;
     var cursor;
@@ -137,7 +136,6 @@ function initMSProject() {
           lbl.className = 'gantt-axis-label';
           lbl.style.left  = lp.toFixed(3) + '%';
           lbl.style.width = wp.toFixed(3) + '%';
-          // Week-end en gris
           var jourSemaine = cursor.getDay();
           if (jourSemaine === 0 || jourSemaine === 6) lbl.style.opacity = '0.4';
           lbl.textContent = cursor.toLocaleDateString('fr-FR', { day: '2-digit', month: wp > 4 ? '2-digit' : undefined });
@@ -195,7 +193,6 @@ function initMSProject() {
     var corrigee = cell.dataset.corrigee === 'true';
     var racine   = cell.dataset.racine   === 'true';
 
-    // Grille verticale
     var c = new Date(plageMin.getFullYear(), plageMin.getMonth() + 1, 1);
     while (c < plageMax) {
       var gl = document.createElement('div');
@@ -205,7 +202,6 @@ function initMSProject() {
       c = new Date(c.getFullYear(), c.getMonth() + 1, 1);
     }
 
-    // Ligne aujourd'hui
     if (todayPct > 0 && todayPct < 100) {
       var tl = document.createElement('div');
       tl.className = 'msp-today-line';
@@ -241,12 +237,6 @@ function initMSProject() {
 
 /* =============================================================================
    DÉPENDANCES — Layout topologique en colonnes + flèches orthogonales
-   
-   Principe garanti sans croisement :
-   - Rang topologique : chaque tâche est placée dans la colonne rang(pred)+1
-   - Les flèches vont toujours de droite → gauche, dans le couloir entre colonnes
-   - Le dernier point du chemin est à ARROW_TIP px du bord (= longueur du marqueur)
-     pour que la pointe touche exactement le bord sans rentrer dans la card
    ============================================================================= */
 
 const DEPS_COLOR        = '#9b93c4';
@@ -258,7 +248,6 @@ const CARD_W     = 240;
 const CARD_GAP_X = 60;
 const CARD_GAP_Y = 20;
 
-// ── Graphe depuis le DOM ──────────────────────────────────────────────────────
 function construireGraphe(cards) {
   const ids   = new Set(cards.map(c => c.dataset.tacheId));
   const preds = new Map();
@@ -278,7 +267,6 @@ function construireGraphe(cards) {
   return { ids, preds, succs };
 }
 
-// ── Rang topologique (Kahn) ───────────────────────────────────────────────────
 function calculerRangs(ids, preds, succs) {
   const rang  = new Map();
   const inDeg = new Map();
@@ -295,13 +283,11 @@ function calculerRangs(ids, preds, succs) {
   return rang;
 }
 
-// ── Layout topologique ────────────────────────────────────────────────────────
 function layoutTopoCards(wrap) {
   if (!wrap) return;
   const cards = Array.from(wrap.querySelectorAll('[data-tache-id]:not(.sous-tache-panel--hidden)'));
   if (!cards.length) { wrap.style.height = '0'; return; }
 
-  // Reset positions
   cards.forEach(c => {
     c.style.position = '';
     c.style.left     = '';
@@ -311,12 +297,10 @@ function layoutTopoCards(wrap) {
 
   const { ids, preds, succs } = construireGraphe(cards);
 
-  // Vérifier s'il existe au moins une dépendance
   let hasDeps = false;
   ids.forEach(id => { if (preds.get(id).length > 0) hasDeps = true; });
 
   if (!hasDeps) {
-    // Aucune dépendance → flex-wrap natif (pas d'absolute, pas de hauteur forcée)
     wrap.style.display  = 'flex';
     wrap.style.flexWrap = 'wrap';
     wrap.style.gap      = CARD_GAP_Y + 'px';
@@ -325,7 +309,6 @@ function layoutTopoCards(wrap) {
     return;
   }
 
-  // Réinitialiser si on repasse en mode topo après filtre
   wrap.style.display  = '';
   wrap.style.flexWrap = '';
   wrap.style.gap      = '';
@@ -356,7 +339,6 @@ function layoutTopoCards(wrap) {
   wrap.style.height = (maxH + CARD_GAP_Y) + 'px';
 }
 
-// ── SVG path avec coins arrondis ──────────────────────────────────────────────
 function ptsVersSVG(pts) {
   if (pts.length < 2) return '';
   let d = `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
@@ -374,44 +356,24 @@ function ptsVersSVG(pts) {
   return d + ` L${l.x.toFixed(1)},${l.y.toFixed(1)}`;
 }
 
-// ── Tracer une flèche pred → succ ─────────────────────────────────────────────
-// Le chemin s'arrête à ARROW_TIP px du bord de la card dest.
-// Le marqueur (triangle de longueur ARROW_TIP) s'étend de ce point jusqu'au bord.
-// Résultat : la pointe touche exactement le bord, sans rentrer dans la card.
-// ── Tracer une flèche pred → succ ─────────────────────────────────────────────
-// allRects : tous les rects, pour détecter les obstacles dans le canal vertical.
-// ── Tracer une flèche pred → succ ─────────────────────────────────────────────
 function tracerFleche(pred, succ, allRects) {
-  const x1 = pred.x + pred.w;        // bord droit pred
-  const y1 = pred.y + pred.h / 2;    // milieu vertical pred
-  const x2 = succ.x;                 // bord gauche succ
-  const y2 = succ.y + succ.h / 2;    // milieu vertical succ
-  const M  = 8;
+  const x1 = pred.x + pred.w;
+  const y1 = pred.y + pred.h / 2;
+  const x2 = succ.x;
+  const y2 = succ.y + succ.h / 2;
 
-  // ── Succ est à droite (rang supérieur) ────────────────────────────────────
   if (succ.rang > pred.rang) {
-
-    // Cas 1 : même hauteur ET colonnes adjacentes → ligne droite
     if (Math.abs(y1 - y2) < 3 && succ.rang === pred.rang + 1) {
       return ptsVersSVG([{ x: x1, y: y1 }, { x: x2, y: y2 }]);
     }
-
-    // Cas 2 : colonnes adjacentes, hauteurs différentes → Z dans le couloir
     if (succ.rang === pred.rang + 1) {
       const cx = (x1 + x2) / 2;
       return ptsVersSVG([
-        { x: x1, y: y1 },
-        { x: cx, y: y1 },
-        { x: cx, y: y2 },
-        { x: x2, y: y2 },
+        { x: x1, y: y1 }, { x: cx, y: y1 },
+        { x: cx, y: y2 }, { x: x2, y: y2 },
       ]);
     }
-
-    // Cas 3 : saut de plusieurs colonnes → contourner par le bas
-    // yPass = juste sous pred (pas sous toutes les cards de la zone)
     const yPass = pred.y + pred.h + CARD_GAP_Y * 0.75;
-
-    // Sort par le bas de pred, longe sous tout, remonte dans succ par le bas.
     const xSuccMid   = x2 + succ.w / 2;
     const markerSize = 10;
     return ptsVersSVG([
@@ -422,7 +384,6 @@ function tracerFleche(pred, succ, allRects) {
     ]);
   }
 
-  // ── Succ est à gauche ou même rang → contourner par le bas ────────────────
   const yPass = Math.max(pred.y + pred.h, succ.y + succ.h) + CARD_GAP_Y * 2;
   return ptsVersSVG([
     { x: pred.x + pred.w / 2, y: pred.y + pred.h },
@@ -432,18 +393,13 @@ function tracerFleche(pred, succ, allRects) {
   ]);
 }
 
-// ── Marqueur flèche ───────────────────────────────────────────────────────────
-// markerUnits="strokeWidth" : markerWidth/Height sont en multiples du stroke-width.
-// Avec stroke-width=2, markerWidth=5 → 10px, markerHeight=4 → 8px.
-// refX=5 place la POINTE (x=5 dans l'espace marker) sur le bord de la card.
-// Triangle : M0,0 L0,4 L5,2 Z — pointe à x=5 (bord droit du marker).
 function creerMarqueur(NS, id, couleur) {
   const m = document.createElementNS(NS, 'marker');
   m.setAttribute('id',          id);
-  m.setAttribute('markerWidth', '5');    // × stroke-width(2) = 10px réels
-  m.setAttribute('markerHeight','4');    // × stroke-width(2) = 8px réels
-  m.setAttribute('refX',        '5');    // pointe du triangle = point final du chemin
-  m.setAttribute('refY',        '2');    // centre vertical
+  m.setAttribute('markerWidth', '5');
+  m.setAttribute('markerHeight','4');
+  m.setAttribute('refX',        '5');
+  m.setAttribute('refY',        '2');
   m.setAttribute('orient',      'auto');
   m.setAttribute('markerUnits', 'strokeWidth');
   const tri = document.createElementNS(NS, 'path');
@@ -453,7 +409,6 @@ function creerMarqueur(NS, id, couleur) {
   return m;
 }
 
-// ── Fonction principale ───────────────────────────────────────────────────────
 function dessinerFleches(svgId) {
   const svg = document.getElementById(svgId);
   if (!svg) return;
@@ -467,7 +422,6 @@ function dessinerFleches(svgId) {
   svg.setAttribute('height',  H);
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
-  // Vider sans toucher aux defs (on les recrée complètement)
   while (svg.firstChild) svg.removeChild(svg.firstChild);
 
   const NS_SVG = 'http://www.w3.org/2000/svg';
@@ -478,7 +432,6 @@ function dessinerFleches(svgId) {
   defs.appendChild(creerMarqueur(NS_SVG, idR, DEPS_COLOR_RETARD));
   svg.appendChild(defs);
 
-  // Rects des cards
   const cardsMap = new Map();
   wrap.querySelectorAll('[data-tache-id]:not(.sous-tache-panel--hidden)').forEach(card => {
     cardsMap.set(card.dataset.tacheId, {
@@ -491,13 +444,11 @@ function dessinerFleches(svgId) {
   });
   if (!cardsMap.size) return;
 
-  // Calculer les rangs pour le routing (pred.rang < succ.rang = succ à droite)
   const cardsArr = Array.from(wrap.querySelectorAll('[data-tache-id]:not(.sous-tache-panel--hidden)'));
   const { ids, preds: predsG, succs: succsG } = construireGraphe(cardsArr);
   const rangMap = calculerRangs(ids, predsG, succsG);
   cardsMap.forEach((r, id) => { r.rang = rangMap.get(id) ?? 0; });
 
-  // Flèches
   wrap.querySelectorAll('[data-predecesseurs]:not(.sous-tache-panel--hidden)').forEach(card => {
     const raw = (card.dataset.predecesseurs || '').trim();
     if (!raw) return;
@@ -575,13 +526,9 @@ function filtrerSousTaches() {
 
     let visible = true;
 
-    // Filtre nom
     if (nom && !panelNom.includes(nom)) visible = false;
-
-    // Filtre retard uniquement
     if (retardOnly && !panelRetard) visible = false;
 
-    // Filtre statut
     if (statut && visible) {
       if (statut === 'en-retard'  && !panelRetard) visible = false;
       if (statut === 'replanifie' && !panel.querySelector('.badge-replanifie')) visible = false;
@@ -589,7 +536,6 @@ function filtrerSousTaches() {
       if (statut === 'en-cours'   && (panelRetard || panelDebut > today)) visible = false;
     }
 
-    // Filtre plage de dates (intersection avec [panelDebut, panelFin])
     if (dateDebut && panelFin  && panelFin  < dateDebut) visible = false;
     if (dateFin   && panelDebut && panelDebut > dateFin)  visible = false;
 
@@ -600,7 +546,6 @@ function filtrerSousTaches() {
   dessinerFleches('deps-svg-detail');
   dessinerFleches('deps-svg-liste');
 
-  // Afficher message vide si aucun résultat
   const vide = document.getElementById('filtre-vide');
   if (vide) vide.style.display = (visibles === 0 && panels.length > 0) ? 'block' : 'none';
 }
@@ -636,11 +581,9 @@ function switchTab(tab) {
     dates:   document.getElementById('tab-dates'),
   };
 
-  // Masquer tous les panels et désactiver tous les onglets
   Object.values(panels).forEach(p => { if (p) p.style.display = 'none'; });
   Object.values(tabs).forEach(t => { if (t) t.classList.remove('tab--active'); });
 
-  // Activer le panel et l'onglet demandés
   if (panels[tab]) panels[tab].style.display = '';
   if (tabs[tab])   tabs[tab].classList.add('tab--active');
 
@@ -686,18 +629,15 @@ function onDrop(event, statut) {
   .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })))
   .then(({ ok, status, data }) => {
     if (!ok) {
-      // Erreur métier (conflit prédécesseur etc.)
       const msg = data.erreur || 'Erreur lors du changement de statut.';
       afficherToast(msg, 'erreur');
       return;
     }
-    // Déplacer la card visuellement
     const card = document.querySelector(`.kanban-card[data-id="${cardId}"]`);
     const body = document.querySelector(`.kanban-col[data-statut="${statut}"] .kanban-col__body`);
     if (card && body) body.appendChild(card);
     updateKanbanCounts();
 
-    // Toast d'info si des tâches ascendantes ont été auto-terminées
     if (data.autoTermines && data.autoTermines.length > 0) {
       const noms = data.autoTermines.join(', ');
       afficherToast(
@@ -720,7 +660,6 @@ function updateKanbanCounts() {
   });
 }
 
-// Initialiser les compteurs au chargement
 window.addEventListener('load', () => updateKanbanCounts());
 
 function onDragEnd(event) {
@@ -741,7 +680,6 @@ function onDragLeave(event) {
    ============================================================================= */
 
 function afficherToast(message, type) {
-  // type : 'info' | 'erreur'
   let container = document.getElementById('toast-container');
   if (!container) {
     container = document.createElement('div');
@@ -754,10 +692,8 @@ function afficherToast(message, type) {
   toast.textContent = message;
   container.appendChild(toast);
 
-  // Apparition
   requestAnimationFrame(() => toast.classList.add('toast--visible'));
 
-  // Disparition après 4s
   setTimeout(() => {
     toast.classList.remove('toast--visible');
     toast.addEventListener('transitionend', () => toast.remove(), { once: true });
@@ -768,13 +704,10 @@ function afficherToast(message, type) {
    ONGLET DATES — frise chronologique + édition inline
    ============================================================================= */
 
-// ---- Dessin de la frise + flèches de dépendances ----
-
 function dessinerFrises() {
   const canvases = document.querySelectorAll('#panel-dates .frise-canvas');
   if (!canvases.length) return;
 
-  // Calculer la plage globale : min(tous débuts) → max(toutes fins)
   let minDate = null, maxDate = null;
   canvases.forEach(c => {
     [c.dataset.debut, c.dataset.fin].filter(Boolean).forEach(d => {
@@ -786,7 +719,7 @@ function dessinerFrises() {
 
   if (!minDate || !maxDate) return;
 
-  const span  = maxDate - minDate || 86400000; // au moins 1 jour
+  const span  = maxDate - minDate || 86400000;
   const marge = span * 0.07;
   const rangeStart = new Date(minDate.getTime() - marge);
   const rangeEnd   = new Date(maxDate.getTime() + marge);
@@ -806,12 +739,10 @@ function dessinerFrises() {
     const fin        = c.dataset.fin;
     const estCorrige = c.dataset.finCorrigee === 'true';
 
-    // Rail gris
     ctx.fillStyle = '#e8e4df';
     ctx.roundRect(0, H/2 - 3, W, 6, 3);
     ctx.fill();
 
-    // Barre début → fin
     if (debut && fin) {
       const x1 = toX(debut);
       const x2 = toX(fin);
@@ -820,7 +751,6 @@ function dessinerFrises() {
       ctx.fill();
     }
 
-    // Points
     const dot = (d, color, r) => {
       if (!d) return;
       ctx.beginPath();
@@ -832,25 +762,22 @@ function dessinerFrises() {
     dot(fin,   estCorrige ? '#c0662a' : '#5a8cc0', 5);
   });
 
-  // Dessiner les flèches après les canvas
   dessinerFlechesFrise();
 }
 
 function dessinerFlechesFrise() {
   const svg = document.getElementById('frise-svg');
   if (!svg) return;
-  svg.innerHTML = ''; // reset
+  svg.innerHTML = '';
 
   const zone     = document.getElementById('frise-zone');
   const zoneRect = zone.getBoundingClientRect();
 
-  // Index : id → canvas
   const canvasById = {};
   document.querySelectorAll('#panel-dates .frise-canvas[data-id]').forEach(c => {
     canvasById[c.dataset.id] = c;
   });
 
-  // Calculer la plage de dates (même logique que dessinerFrises)
   let minDate = null, maxDate = null;
   Object.values(canvasById).forEach(c => {
     [c.dataset.debut, c.dataset.fin].filter(Boolean).forEach(d => {
@@ -872,7 +799,6 @@ function dessinerFlechesFrise() {
     const rect = canvas.getBoundingClientRect();
     const W    = rect.width;
     const frac = (new Date(dateStr) - rangeStart) / rangeMs;
-    // position absolue dans la zone
     return (rect.left - zoneRect.left) + frac * W;
   };
 
@@ -881,17 +807,15 @@ function dessinerFlechesFrise() {
     return (rect.top - zoneRect.top) + rect.height / 2;
   };
 
-  // Mettre à jour le SVG pour couvrir la zone
   svg.setAttribute('width',  zone.offsetWidth);
   svg.setAttribute('height', zone.offsetHeight);
 
-  // Dessiner une flèche pour chaque dépendance
   document.querySelectorAll('#panel-dates .frise-canvas[data-predecesseurs]').forEach(cSucc => {
     const preds = cSucc.dataset.predecesseurs;
     if (!preds) return;
     preds.split(',').filter(Boolean).forEach(predId => {
       const cPred = canvasById[predId.trim()];
-      if (!cPred) return; // prédécesseur hors-écran, ignoré
+      if (!cPred) return;
 
       const x1 = toX(cPred, cPred.dataset.fin);
       const y1 = midY(cPred);
@@ -903,7 +827,6 @@ function dessinerFlechesFrise() {
       const cpX1 = x1 + Math.max(dx * 0.4, 20);
       const cpX2 = x2 - Math.max(dx * 0.4, 20);
 
-      // Tracé
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', `M ${x1} ${y1} C ${cpX1} ${y1}, ${cpX2} ${y2}, ${x2} ${y2}`);
       path.setAttribute('fill', 'none');
@@ -913,11 +836,8 @@ function dessinerFlechesFrise() {
       path.setAttribute('opacity', '0.8');
       svg.appendChild(path);
 
-      // Pointe de flèche
-      const angle = Math.atan2(y2 - y1, x2 - x1) * 0; // flèche horizontale d'arrivée
       const arr = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       const sz  = 7;
-      // pointe vers la droite (x2,y2)
       arr.setAttribute('points',
         `${x2},${y2} ${x2 - sz},${y2 - sz * 0.5} ${x2 - sz},${y2 + sz * 0.5}`
       );
@@ -928,51 +848,80 @@ function dessinerFlechesFrise() {
   });
 }
 
-// ---- Sauvegarde date de fin (input direct) ----
+/* ---- Sauvegarde date via AJAX — lit désormais un JSON typé (DateUpdateResponseDTO) ---- */
 
+function sauvegarderDate(tacheId, champ, valeur) {
+  fetch(`/taches/${tacheId}/dates`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `champ=${encodeURIComponent(champ)}&valeur=${encodeURIComponent(valeur || '')}`
+  })
+  .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })))
+  .then(({ ok, status, data }) => {
+    if (status === 409 && data.r6) {
+      // R6 : conflit successeurs — demander confirmation
+      const confirmation = window.confirm(
+        `⚠️ La nouvelle date de fin impacte des successeurs : ${data.impactes}.\n\n` +
+        'Voulez-vous décaler automatiquement leurs dates de début ?'
+      );
+      if (confirmation) {
+        fetch(`/taches/${tacheId}/dates/decaler`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `valeur=${encodeURIComponent(valeur)}`
+        })
+        .then(r => r.json())
+        .then(d => {
+          if (d.erreur) { afficherToast('Erreur : ' + d.erreur, 'erreur'); }
+          else { afficherToast('Dates décalées avec succès.', 'info'); location.reload(); }
+        })
+        .catch(() => afficherToast('Erreur réseau lors du décalage.', 'erreur'));
+      }
+      return;
+    }
+    if (!ok) {
+      afficherToast('Erreur : ' + (data.erreur || 'Mise à jour impossible.'), 'erreur');
+      return;
+    }
+    afficherToast('Date mise à jour.', 'info');
+    dessinerFrises();
+  })
+  .catch(err => afficherToast('Erreur réseau : ' + err.message, 'erreur'));
+}
+
+/**
+ * Utilisé par l'onglet Dates pour les inputs de date de fin inline.
+ * Conserve la compatibilité avec les appels existants dans detail.html.
+ */
 function sauvegarderDateFin(input) {
   const id  = input.dataset.id;
   const val = input.value;
 
-  fetch(`/taches/${id}/dates`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `champ=dateFinCorrigee&valeur=${encodeURIComponent(val)}`
-  })
-  .then(r => {
-    if (!r.ok) return r.text().then(t => { throw new Error(t); });
-    // Mettre à jour la frise canvas
-    const canvas = document.querySelector(`#panel-dates .frise-canvas[data-id="${id}"]`);
-    if (canvas) {
-      canvas.dataset.fin = val;
-      canvas.dataset.finCorrigee = val ? 'true' : 'false';
+  sauvegarderDate(id, 'dateFin', val);
+
+  // Mise à jour visuelle locale
+  const canvas = document.querySelector(`#panel-dates .frise-canvas[data-id="${id}"]`);
+  if (canvas) {
+    canvas.dataset.fin = val;
+    canvas.dataset.finCorrigee = val ? 'true' : 'false';
+  }
+  if (val) {
+    input.classList.add('frise-input-fin--corrigee');
+  } else {
+    input.classList.remove('frise-input-fin--corrigee');
+  }
+  const row = input.closest('.frise-row');
+  if (row) {
+    const alerteCol = row.querySelector('.frise-alerte-col');
+    if (alerteCol) {
+      const estDepasse = val && new Date(val + 'T00:00:00') < new Date(new Date().toDateString());
+      alerteCol.innerHTML = estDepasse
+        ? '<span class="frise-alerte-icon" title="Date de fin dépassée">🔴</span>'
+        : '';
     }
-    // Marquer visuellement l'input
-    if (val) {
-      input.classList.add('frise-input-fin--corrigee');
-    } else {
-      input.classList.remove('frise-input-fin--corrigee');
-    }
-    // Mettre à jour l'icône d'alerte de la ligne
-    const row = input.closest('.frise-row');
-    if (row) {
-      const alerteCol = row.querySelector('.frise-alerte-col');
-      if (alerteCol) {
-        const estDepasse = val && new Date(val + 'T00:00:00') < new Date(new Date().toDateString());
-        alerteCol.innerHTML = estDepasse
-          ? '<span class="frise-alerte-icon" title="Date de fin dépassée">🔴</span>'
-          : '';
-      }
-    }
-    dessinerFrises();
-    afficherToast('Date de fin mise à jour.', 'info');
-  })
-  .catch(err => {
-    afficherToast('Erreur : ' + err.message, 'erreur');
-  });
+  }
 }
 
-// Redessiner si resize
 window.addEventListener('resize', () => {
   if (document.getElementById('panel-dates')?.style.display !== 'none') {
     dessinerFrises();
